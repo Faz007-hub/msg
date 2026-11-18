@@ -16,7 +16,7 @@
    * Replace 'YOUR_FORMSPREE_ENDPOINT' with your actual Formspree endpoint URL.
    * Example: 'https://formspree.io/f/xyzabk'
    */
-  const FORMSPREE_ENDPOINT = 'YOUR_FORMSPREE_ENDPOINT';
+  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mljbbvke';
 
   /**
    * WhatsApp Configuration:
