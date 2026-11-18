@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#ffd6e0">
+  <meta name="description" content="A special, heartfelt apology from Bhaiyoo to his beloved sister Motu. ❤️">
+  <title>A Message For My Sister ❤️ | Sorry Motu</title>
+
+  <!-- Google Fonts: Quicksand (friendly modern UI), Caveat (heartfelt handwritten notes), Nunito (clean readable letter body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Ambient Animated Background Particles Canvas -->
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+
+  <!-- Celebration Confetti Canvas (for Screen 4A) -->
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+  <!-- Background Decorative Pastel Orbs -->
+  <div class="bg-orb orb-pink" aria-hidden="true"></div>
+  <div class="bg-orb orb-lavender" aria-hidden="true"></div>
+  <div class="bg-orb orb-peach" aria-hidden="true"></div>
+  <div class="bg-orb orb-blue" aria-hidden="true"></div>
+
+  <!-- Top Persistent Header / Progress Bar -->
+  <header class="top-nav" id="top-nav">
+    <div class="nav-content">
+      <button class="nav-back-btn hidden" id="nav-back-btn" aria-label="Go to previous screen">
+        <svg viewBox="0 0 24 24" class="nav-icon" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span>Wapis</span>
+      </button>
+
+      <!-- Stepper / Indicator Dots -->
+      <div class="stepper" id="stepper" aria-label="Progress steps">
+        <span class="step-dot active" data-step="1" title="Welcome Envelope">💌</span>
+        <span class="step-line"></span>
+        <span class="step-dot" data-step="2" title="Sorry Motu">🥺</span>
+        <span class="step-line"></span>
+        <span class="step-dot" data-step="3" title="Bhaiyoo's Letter">📜</span>
+        <span class="step-line"></span>
+        <span class="step-dot" data-step="4" title="Final Answer">❤️</span>
+      </div>
+
+      <!-- Music / Sound FX Toggle Button -->
+      <button class="sound-toggle-btn" id="sound-toggle-btn" aria-label="Toggle sweet background music"
+        title="Play cute music box melody">
+        <span class="sound-icon" id="sound-icon">🎵</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Multi-Screen Container -->
+  <main class="app-container" id="app-container">
+
+    <!-- ========================================== -->
+    <!-- SCREEN 1: A MESSAGE FOR MY SISTER 💌       -->
+    <!-- ========================================== -->
+    <section class="screen active" id="screen-1" aria-labelledby="s1-heading">
+      <div class="screen-content text-center">
+
+        <div class="badge-pill floating-badge">
+          <span class="sparkle-icon">✨</span> For My Dearest Sister
+        </div>
+
+        <h1 class="main-title" id="s1-heading">
+          A Message For My Sister <span class="heart-pulse">❤️</span>
+        </h1>
+
+        <p class="subtitle">
+          Someone has something important to tell you plz poora parhna gussa nhi karna plz...
+        </p>
+
+        <!-- 3D Interactive Sealed Envelope -->
+        <div class="envelope-wrapper" id="envelope-wrapper" role="button" tabindex="0"
+          aria-label="Open sealed envelope from Bhaiyoo">
+          <div class="envelope-3d" id="envelope-3d">
+            <!-- Envelope Back Wall -->
+            <div class="env-back"></div>
+
+            <!-- Letter Sliding Out Inside -->
+            <div class="env-letter" id="env-letter">
+              <div class="env-letter-preview">
+                <span class="env-letter-heart">💖</span>
+                <p class="env-letter-text">Dearest Motu...</p>
+                <div class="env-letter-lines"></div>
+              </div>
+            </div>
+
+            <!-- Envelope Pocket (Bottom & Sides) -->
+            <div class="env-pocket"></div>
+
+            <!-- Envelope Front Flap with Wax Seal -->
+            <div class="env-flap" id="env-flap">
+              <div class="wax-seal" id="wax-seal" title="Wax seal: Click to open!">
+                <div class="seal-inner">
+                  <span class="seal-heart">❤️</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cute floating label banner on envelope -->
+            <div class="envelope-card-label">
+              <p class="envelope-label-text">
+                "Motu, please open this... It's from your Bhaiyooo 🥺❤️"
+              </p>
+            </div>
+          </div>
+
+          <!-- Pulsing Hint -->
+          <div class="tap-hint">
+            <span class="tap-finger">👆</span> Tap the envelope or click below
+          </div>
+        </div>
+
+        <!-- Forward Button -->
+        <div class="action-btn-group">
+          <button class="btn btn-primary btn-large btn-glow" id="btn-screen1-forward">
+            <span>Click To Go Forward ❤️</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 2: SORRY MOTU 🥺                    -->
+    <!-- ========================================== -->
+    <section class="screen" id="screen-2" aria-labelledby="s2-heading">
+      <div class="screen-content text-center">
+
+        <div class="badge-pill floating-badge soft-lavender-badge">
+          <span>🥺</span> Maaf Kardo Motu bhaiyoo ko tumhara bhaiyoo apni bhen ko khona nhi chahta
+        </div>
+
+        <h1 class="main-title" id="s2-heading">
+          Sorry Motu <span class="heart-pulse">🥺❤️</span>
+        </h1>
+
+        <p class="subtitle from-bhaiyoo-tag">
+          From Your Bhaiyooo
+        </p>
+
+        <!-- Cute Animated Pleading Teddy Bear Illustration (Custom Vector) -->
+        <div class="teddy-container" id="teddy-screen2">
+          <svg class="teddy-svg pleading-teddy" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg"
+            aria-label="Cute pleading teddy bear holding a sorry letter">
+            <!-- Shadow -->
+            <ellipse cx="110" cy="205" rx="70" ry="12" fill="rgba(180, 140, 170, 0.25)" class="anim-shadow" />
+
+            <!-- Bear Body -->
+            <g class="teddy-body-group">
+              <!-- Ears -->
+              <circle cx="68" cy="68" r="24" fill="#d4a373" class="anim-left-ear" />
+              <circle cx="68" cy="68" r="14" fill="#ffccd5" />
+              <circle cx="152" cy="68" r="24" fill="#d4a373" class="anim-right-ear" />
+              <circle cx="152" cy="68" r="14" fill="#ffccd5" />
+
+              <!-- Head -->
+              <ellipse cx="110" cy="98" rx="52" ry="46" fill="#dda15e" />
+
+              <!-- Snout -->
+              <ellipse cx="110" cy="112" rx="24" ry="18" fill="#faedcd" />
+              <!-- Nose -->
+              <polygon points="104,106 116,106 110,113" fill="#6f4e37" />
+              <!-- Mouth -->
+              <path d="M 104 116 Q 110 121 116 116" stroke="#6f4e37" stroke-width="2.5" fill="none"
+                stroke-linecap="round" />
+
+              <!-- Cheeks Blush -->
+              <ellipse cx="80" cy="114" rx="9" ry="6" fill="#ff99aa" opacity="0.6" class="anim-blush" />
+              <ellipse cx="140" cy="114" rx="9" ry="6" fill="#ff99aa" opacity="0.6" class="anim-blush" />
+
+              <!-- Pleading Eyes with sparkle highlights -->
+              <g class="anim-eyes">
+                <!-- Left Eye -->
+                <circle cx="92" cy="95" r="7.5" fill="#3d2b27" />
+                <circle cx="94" cy="92.5" r="3" fill="#ffffff" />
+                <circle cx="89.5" cy="97" r="1.5" fill="#ffffff" />
+                <!-- Right Eye -->
+                <circle cx="128" cy="95" r="7.5" fill="#3d2b27" />
+                <circle cx="130" cy="92.5" r="3" fill="#ffffff" />
+                <circle cx="125.5" cy="97" r="1.5" fill="#ffffff" />
+              </g>
+
+              <!-- Torso -->
+              <ellipse cx="110" cy="160" rx="44" ry="40" fill="#dda15e" />
+              <ellipse cx="110" cy="162" rx="28" ry="24" fill="#faedcd" />
+
+              <!-- Feet -->
+              <ellipse cx="74" cy="192" rx="20" ry="14" fill="#d4a373" />
+              <ellipse cx="74" cy="191" rx="12" ry="8" fill="#ffccd5" />
+              <ellipse cx="146" cy="192" rx="20" ry="14" fill="#d4a373" />
+              <ellipse cx="146" cy="191" rx="12" ry="8" fill="#ffccd5" />
+
+              <!-- Little Paws holding the Sorry Heart/Letter -->
+              <g class="hands-holding">
+                <ellipse cx="78" cy="148" rx="12" ry="10" fill="#d4a373" transform="rotate(-15 78 148)" />
+                <ellipse cx="142" cy="148" rx="12" ry="10" fill="#d4a373" transform="rotate(15 142 148)" />
+              </g>
+
+              <!-- Letter / Heart in paws -->
+              <g class="teddy-letter-item anim-gentle-bob">
+                <rect x="80" y="132" width="60" height="42" rx="8" fill="#ffffff" stroke="#ffb3c6" stroke-width="2"
+                  filter="drop-shadow(0 4px 6px rgba(251,111,146,0.2))" />
+                <!-- Red Heart on Letter -->
+                <path
+                  d="M 110 146 C 106 140, 97 143, 97 149 C 97 156, 110 164, 110 164 C 110 164, 123 156, 123 149 C 123 143, 114 140, 110 146 Z"
+                  fill="#fb6f92" />
+                <text x="110" y="170" font-family="'Nunito', sans-serif" font-weight="700" font-size="7" fill="#845ec2"
+                  text-anchor="middle">SORRY MOTU</text>
+              </g>
+            </g>
+
+            <!-- Floating mini hearts around bear -->
+            <path
+              d="M 45 90 C 42 85, 34 87, 34 92 C 34 98, 45 104, 45 104 C 45 104, 56 98, 56 92 C 56 87, 48 85, 45 90 Z"
+              fill="#ff8fa3" class="float-heart-1" />
+            <path
+              d="M 175 95 C 172 90, 164 92, 164 97 C 164 103, 175 109, 175 109 C 175 109, 186 103, 186 97 C 186 92, 178 90, 175 95 Z"
+              fill="#b392ac" class="float-heart-2" />
+          </svg>
+        </div>
+
+        <p class="screen2-subtext">
+          Bhaiyoo has poured his heart out in a special letter just for you.
+        </p>
+
+        <!-- Reveal Button -->
+        <div class="action-btn-group">
+          <button class="btn btn-primary btn-large btn-glow" id="btn-screen2-reveal">
+            <span>Click To Reveal Bhaiyoo's Message 💌</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 3: THE MAIN APOLOGY MESSAGE ❤️      -->
+    <!-- ========================================== -->
+    <section class="screen" id="screen-3" aria-labelledby="s3-heading">
+      <div class="screen-content">
+
+        <div class="letter-outer-wrapper">
+          <!-- Letter Card with Parchment & Glassmorphism Aesthetics -->
+          <article class="letter-card" id="main-letter-card">
+
+            <!-- Decorative Postage Stamp & Air Mail Header -->
+            <div class="letter-header">
+              <div class="airmail-strip"></div>
+              <div class="letter-meta">
+                <span class="letter-from-tag">💌 From: Bhaiyooo</span>
+                <span class="letter-to-tag">To: Meri Motu ❤️</span>
+              </div>
+              <div class="postage-stamp" title="Special Delivery for Motu">
+                <span class="stamp-heart">💖</span>
+                <span class="stamp-text">BHAIYOO'S HEART</span>
+              </div>
+            </div>
+
+            <!-- Letter Title -->
+            <h2 class="letter-title" id="s3-heading">
+              Meri Pyari Motu ❤️
+            </h2>
+
+            <div class="letter-divider">
+              <span class="divider-line"></span>
+              <span class="divider-flower">🌸</span>
+              <span class="divider-line"></span>
+            </div>
+
+            <!-- Scrollable Letter Body (Exact Verbatim Text As Required) -->
+            <div class="letter-body" id="letter-body">
+              <p class="letter-para">
+                motu meri pyari bhen mujhe pata hai mai bohot ghaltiyan karta hou laikin kabhi tumhare liye bura soch
+                kar ya against soch kar kuch nhi kiya tum meri bhen ho tumhe pata hai tum imp ho bhen ko liye kabhi bura
+                thori sochou ga yaar plz sorry yaar.
+              </p>
+
+              <p class="letter-para">
+                you know k tum meri bohot achi bhen ho dosst ho mai tumhe hurt nhi karna chahta yaar mujhe jhoot bol kar
+                lia milega bhenou ka bura thori sochte hain or jab itni achi bhen ho phir to sawal hi paida nhi hota or
+                ksm se mai jhoot nhi bol raha yaar meri tabiyat sach mai kharab thi or na hi maine tumhe
+                msg kiye the doosre number wo maine karwai the ghalti se hogai k wo nhi karwana chayie tha use liye
+                sorry motu plz maan ja mai to acha bhaiyoo tha na yaar apka bhaiyoo apke liye acha hi hai plz chore
+                gussa 2 hafte se mis kar rha hou tumhari mazak pranks koi kaam bhi nhi dia tumhara tng karna maza nhi
+                ata is tara acha agta hai jab tum tng karti baar baar bbar call karke kaam bolti acha lgta hai bhai nhi
+                karega kaam to kon karega aage bhi karou ga kaam aage bhi khayal rakhou ga promise hai bhaiyoo ka bhai
+                bhen mai choti moti cheezen hojati hai laikin laikin tumhe pata hai i dont want to
+                loose you plz motu
+                sorry yaar.
+              </p>
+
+              <p class="letter-para">
+                ksm se sach bol raha hou koi jhoot nhi hai tabiyat kharb thi dost se msg karwaya tha job sach mai thi ye
+                sach hai.
+              </p>
+
+              <p class="letter-para">
+                plz motu sorry maaf karde ghalti hojati bhai bhi insaan hai ainda koshish karou ga koi shikayat ka moka
+                na dou tumhe pata hai na jab tum is tara gussa ya naraz hoti acha nhi lagta mujhe plz jp bolo g karou ga
+                bas meri motu wapis ajai plz mujhe tng karne mis kar raha hou motu tumhe yaad nhi aati bhai ki kia
+              </p>
+
+              <!-- Letter Sign-off -->
+              <div class="letter-signoff">
+                <p class="signoff-sorry">Sorry Motuuu ❤️</p>
+                <p class="signoff-bhai">Apka Bhaiyooo 🥺</p>
+              </div>
+            </div>
+
+          </article>
+        </div>
+
+        <!-- Question & Decision Section -->
+        <div class="decision-section text-center">
+          <p class="decision-question">
+            Ab batao Motu... Apne Bhaiyoo ko maaf kiya? 🥺
+          </p>
+
+          <div class="decision-buttons">
+            <!-- Forgiveness Button (Leads to Screen 4A) -->
+            <button class="btn btn-forgive btn-glow" id="btn-forgive">
+              <span class="btn-icon">❤️</span>
+              <span>Bhaiyoo Ko Maaf Kiya</span>
+            </button>
+
+            <!-- Not Forgiven Button (Leads to Screen 4B) -->
+            <button class="btn btn-not-forgive" id="btn-not-forgive">
+              <span class="btn-icon">😒</span>
+              <span>Nahi Kiya Maaf Bhaiyoo Ko</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 4A: FORGIVENESS CELEBRATION ❤️     -->
+    <!-- ========================================== -->
+    <section class="screen" id="screen-4a" aria-labelledby="s4a-heading">
+      <div class="screen-content text-center">
+
+        <div class="celebration-badge floating-badge">
+          🎉 BEST SISTER IN THE WORLD 🎉
+        </div>
+
+        <h1 class="celebration-title" id="s4a-heading">
+          YAYYYYY! <span class="heart-pulse">🥹❤️</span>
+        </h1>
+
+        <h2 class="celebration-subtitle">
+          BOHOT SHUKRIYA MOTUUUU!
+        </h2>
+
+        <!-- Happy Dancing / Celebrating Bear Illustration -->
+        <div class="teddy-container" id="teddy-screen4a">
+          <svg class="teddy-svg happy-teddy" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg"
+            aria-label="Joyful celebrating teddy bear with heart balloons">
+            <!-- Shadow -->
+            <ellipse cx="110" cy="205" rx="72" ry="12" fill="rgba(180, 140, 170, 0.25)" class="anim-shadow" />
+
+            <!-- Heart Balloons Floating Above -->
+            <g class="balloon-group anim-balloon-float">
+              <!-- Strings -->
+              <path d="M 148 135 Q 165 100 170 50" stroke="#c8b6ff" stroke-width="1.5" fill="none"
+                stroke-dasharray="3 2" />
+              <path d="M 148 135 Q 140 90 135 38" stroke="#ffccd5" stroke-width="1.5" fill="none"
+                stroke-dasharray="3 2" />
+              <!-- Balloons -->
+              <path
+                d="M 170 42 C 164 32, 150 35, 150 45 C 150 56, 170 68, 170 68 C 170 68, 190 56, 190 45 C 190 35, 176 32, 170 42 Z"
+                fill="#fb6f92" />
+              <path
+                d="M 135 30 C 130 22, 118 24, 118 32 C 118 42, 135 52, 135 52 C 135 52, 152 42, 152 32 C 152 24, 140 22, 135 30 Z"
+                fill="#b8c0ff" />
+            </g>
+
+            <!-- Bear Body -->
+            <g class="teddy-body-group anim-happy-bounce">
+              <!-- Ears -->
+              <circle cx="68" cy="68" r="24" fill="#d4a373" />
+              <circle cx="68" cy="68" r="14" fill="#ffccd5" />
+              <circle cx="152" cy="68" r="24" fill="#d4a373" />
+              <circle cx="152" cy="68" r="14" fill="#ffccd5" />
+
+              <!-- Party Hat -->
+              <polygon points="110,32 94,74 126,74" fill="#ffb703" />
+              <polygon points="110,32 102,74 118,74" fill="#fb8500" opacity="0.6" />
+              <circle cx="110" cy="30" r="6" fill="#ff006e" />
+
+              <!-- Head -->
+              <ellipse cx="110" cy="98" rx="52" ry="46" fill="#dda15e" />
+
+              <!-- Snout -->
+              <ellipse cx="110" cy="112" rx="24" ry="18" fill="#faedcd" />
+              <polygon points="104,106 116,106 110,113" fill="#6f4e37" />
+
+              <!-- Happy Smile -->
+              <path d="M 102 116 Q 110 126 118 116" stroke="#6f4e37" stroke-width="2.5" fill="none"
+                stroke-linecap="round" />
+
+              <!-- Blush -->
+              <ellipse cx="78" cy="114" rx="10" ry="7" fill="#ff758f" opacity="0.75" />
+              <ellipse cx="142" cy="114" rx="10" ry="7" fill="#ff758f" opacity="0.75" />
+
+              <!-- Joyful Eyes (^ _ ^) -->
+              <path d="M 85 96 Q 92 88 99 96" stroke="#3d2b27" stroke-width="3.5" fill="none" stroke-linecap="round" />
+              <path d="M 121 96 Q 128 88 135 96" stroke="#3d2b27" stroke-width="3.5" fill="none"
+                stroke-linecap="round" />
+
+              <!-- Torso -->
+              <ellipse cx="110" cy="160" rx="44" ry="40" fill="#dda15e" />
+              <ellipse cx="110" cy="162" rx="28" ry="24" fill="#faedcd" />
+
+              <!-- Feet -->
+              <ellipse cx="74" cy="192" rx="20" ry="14" fill="#d4a373" />
+              <ellipse cx="74" cy="191" rx="12" ry="8" fill="#ffccd5" />
+              <ellipse cx="146" cy="192" rx="20" ry="14" fill="#d4a373" />
+              <ellipse cx="146" cy="191" rx="12" ry="8" fill="#ffccd5" />
+
+              <!-- Raised Arms celebrating -->
+              <ellipse cx="64" cy="138" rx="13" ry="22" fill="#d4a373" transform="rotate(-35 64 138)" />
+              <ellipse cx="156" cy="138" rx="13" ry="22" fill="#d4a373" transform="rotate(35 156 138)" />
+            </g>
+
+            <!-- Sparkles -->
+            <polygon points="45,65 48,73 56,76 48,79 45,87 42,79 34,76 42,73" fill="#ffd166" class="anim-twinkle-1" />
+            <polygon points="180,105 182,110 188,112 182,114 180,119 178,114 172,112 178,110" fill="#ffd166"
+              class="anim-twinkle-2" />
+          </svg>
+        </div>
+
+        <!-- Emotional Unblock Request -->
+        <div class="message-card celebration-card">
+          <p class="unblock-main-text">
+            Chalo ab meri pyari motu, har jagah se unblock karo apne Bhaiyoo ko. 🥺❤️
+          </p>
+          <p class="unblock-sub-text">
+            Ab aur naraz mat rehna. Tumhari bohot yaad aati hai!
+          </p>
+        </div>
+
+        <!-- WhatsApp Pre-fill Section -->
+        <div class="whatsapp-action-box">
+          <p class="whatsapp-instruction">
+            Unblock karne ke baad apne Bhaiyoo ko WhatsApp par ye message bhej dena:
+          </p>
+
+          <!-- Beautiful message preview card -->
+          <div class="wa-preview-card" id="wa-preview-card" title="Click to copy text">
+            <span class="wa-quote-icon">“</span>
+            <span class="wa-message-text" id="wa-message-text">Bhaiyoo maaf kia ❤️</span>
+            <span class="wa-quote-icon">”</span>
+            <div class="wa-copy-badge" id="wa-copy-badge">
+              <span id="wa-badge-text">Tap to copy 📋</span>
+            </div>
+          </div>
+
+          <!-- WhatsApp Button -->
+          <button class="btn btn-whatsapp btn-large btn-glow" id="btn-send-whatsapp">
+            <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+            </svg>
+            <span>💚 Copy & Send on WhatsApp</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 4B: IF SHE DOES NOT FORGIVE 🥺     -->
+    <!-- ========================================== -->
+    <section class="screen" id="screen-4b" aria-labelledby="s4b-heading">
+      <div class="screen-content text-center">
+
+        <div class="badge-pill floating-badge emotional-badge">
+          <span>💔</span> Dil Toot Gaya Yaar
+        </div>
+
+        <h1 class="emotional-title" id="s4b-heading">
+          Kiun Motuuu? <span class="heart-pulse">🥺</span>
+        </h1>
+
+        <h2 class="emotional-subtitle">
+          Aisa Kiun Yaar?
+        </h2>
+
+        <!-- Sad Pouting Teddy Bear Illustration -->
+        <div class="teddy-container" id="teddy-screen4b">
+          <svg class="teddy-svg sad-teddy" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg"
+            aria-label="Heartbroken sad teddy bear holding sorry sign">
+            <!-- Shadow -->
+            <ellipse cx="110" cy="205" rx="68" ry="11" fill="rgba(150, 140, 170, 0.25)" class="anim-shadow" />
+
+            <!-- Sad Bear Body -->
+            <g class="teddy-body-group anim-sad-tremble">
+              <!-- Drooping Ears -->
+              <circle cx="62" cy="74" r="23" fill="#c69566" class="anim-droop-left" />
+              <circle cx="62" cy="74" r="13" fill="#e8c2cb" />
+              <circle cx="158" cy="74" r="23" fill="#c69566" class="anim-droop-right" />
+              <circle cx="158" cy="74" r="13" fill="#e8c2cb" />
+
+              <!-- Head tilted slightly -->
+              <ellipse cx="110" cy="100" rx="50" ry="44" fill="#c69566" />
+
+              <!-- Snout -->
+              <ellipse cx="110" cy="115" rx="23" ry="17" fill="#f4dfb8" />
+              <polygon points="105,109 115,109 110,116" fill="#523927" />
+
+              <!-- Sad upside-down curve mouth -->
+              <path d="M 103 124 Q 110 118 117 124" stroke="#523927" stroke-width="2.5" fill="none"
+                stroke-linecap="round" />
+
+              <!-- Sad Eyes (Drooping/Teary) -->
+              <circle cx="92" cy="98" r="7" fill="#2d1f1c" />
+              <circle cx="94" cy="95" r="2.5" fill="#ffffff" />
+              <circle cx="128" cy="98" r="7" fill="#2d1f1c" />
+              <circle cx="130" cy="95" r="2.5" fill="#ffffff" />
+
+              <!-- Animated Teardrop falling -->
+              <path d="M 88 106 C 88 106, 85 114, 88 117 C 90 119, 93 118, 93 115 C 93 112, 88 106, 88 106 Z"
+                fill="#70d6ff" opacity="0.8" class="anim-teardrop" />
+
+              <!-- Soft Blush -->
+              <ellipse cx="80" cy="117" rx="8" ry="5" fill="#e88c9f" opacity="0.4" />
+              <ellipse cx="140" cy="117" rx="8" ry="5" fill="#e88c9f" opacity="0.4" />
+
+              <!-- Torso -->
+              <ellipse cx="110" cy="162" rx="42" ry="38" fill="#c69566" />
+              <ellipse cx="110" cy="164" rx="26" ry="22" fill="#f4dfb8" />
+
+              <!-- Feet -->
+              <ellipse cx="76" cy="192" rx="19" ry="13" fill="#b08154" />
+              <ellipse cx="144" cy="192" rx="19" ry="13" fill="#b08154" />
+
+              <!-- Hands holding sign -->
+              <ellipse cx="76" cy="150" rx="11" ry="9" fill="#c69566" />
+              <ellipse cx="144" cy="150" rx="11" ry="9" fill="#c69566" />
+
+              <!-- Signboard "Please Maaf Kardo" -->
+              <g class="signboard anim-sign-shake">
+                <rect x="68" y="142" width="84" height="40" rx="8" fill="#fffdfa" stroke="#d8b4e2" stroke-width="2"
+                  filter="drop-shadow(0 4px 6px rgba(0,0,0,0.08))" />
+                <text x="110" y="158" font-family="'Caveat', cursive" font-weight="700" font-size="16" fill="#845ec2"
+                  text-anchor="middle">Please Maaf Kardo</text>
+                <text x="110" y="174" font-family="'Nunito', sans-serif" font-weight="800" font-size="10" fill="#e85d75"
+                  text-anchor="middle">🥺 MOTU 🥺</text>
+              </g>
+            </g>
+
+            <!-- Floating Broken Heart slowly healing -->
+            <g class="broken-heart-group anim-healing-heart">
+              <path d="M 40 70 L 46 80 L 43 85 L 50 95" stroke="#e85d75" stroke-width="2" fill="none" />
+              <path
+                d="M 42 66 C 38 60, 28 62, 28 69 C 28 77, 42 86, 42 86 C 42 86, 56 77, 56 69 C 56 62, 46 60, 42 66 Z"
+                fill="#ffccd5" opacity="0.6" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- Emotional Apology Box (Exact Verbatim Text) -->
+        <div class="message-card emotional-card">
+          <p class="emotional-para">Aisa to nahi bolo mujhe...</p>
+          <p class="emotional-para">Mujhe apni bhen wapis chayie hai Motu. ❤️</p>
+          <p class="emotional-para highlight-plea">Plzzzz wapis dedo meri bhen.</p>
+          <p class="emotional-para">Jo bolo gi karou ga, bas maan jao.</p>
+          <p class="emotional-para">Tumhare bina maza nahi aata yaar. Na mazak, na pranks, na kuch bhi.</p>
+          <p class="emotional-para final-plea">Please Motu, tumhara Bhaiyoo sach mein sorry hai. 🥺</p>
+        </div>
+
+        <!-- Formspree Message Input Section -->
+        <div class="sister-message-section" id="sister-message-section">
+          <div class="form-header">
+            <h3 class="form-title">
+              Apne Bhaiyoo Ke Liye Ek Message Likho ❤️
+            </h3>
+            <p class="form-subtitle">
+              Batao Bhaiyoo ko tumhe manane ke liye kya karna hoga?
+            </p>
+          </div>
+
+          <!-- Formspree Submission Form -->
+          <form class="sister-form" id="sister-message-form" novalidate>
+
+            <div class="textarea-wrapper">
+              <textarea id="sister-message-text" name="message" rows="4"
+                placeholder="Yahan apne Bhaiyoo ke liye message likho..." required maxlength="2000"
+                aria-label="Message for your Bhaiyoo"></textarea>
+              <div class="char-count">
+                <span id="char-counter">0</span>/2000
+              </div>
+            </div>
+
+            <!-- Form Status / Feedback Alert Box -->
+            <div class="form-alert hidden" id="form-alert" role="alert"></div>
+
+            <button type="submit" class="btn btn-send-form btn-large btn-glow" id="btn-send-message">
+              <span class="btn-spinner hidden" id="btn-spinner"></span>
+              <span class="btn-text" id="btn-text">💌 Send Message To Bhaiyoo</span>
+            </button>
+
+          </form>
+
+          <!-- Success Confirmation Card (Shown after verified Formspree submission) -->
+          <div class="form-success-card hidden" id="form-success-card">
+            <div class="success-envelope-anim">
+              <span class="flying-env">✉️</span>
+              <span class="flying-hearts">💖</span>
+            </div>
+            <h3 class="success-heading">Message sent successfully, Motu! ❤️</h3>
+            <p class="success-subheading">
+              Ab Bhaiyoo tumhara message parh kar zaroor reply karega. 🥺
+            </p>
+            <div class="success-sparkles">✨ ✨ ✨</div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Toast Notification Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1807 @@
+/* ==========================================================================
+   A SPECIAL SORRY WEBSITE FOR MY SISTER ❤️
+   Clean, Modular, Mobile-First CSS3 Stylesheet
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CSS Variables & Theme Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  /* Pastel & Romantic Palette */
+  --color-pink-soft: #ffe5ec;
+  --color-pink-primary: #ffb3c6;
+  --color-pink-vibrant: #fb6f92;
+  --color-pink-deep: #e85d75;
+  --color-lavender-soft: #f3effc;
+  --color-lavender-primary: #c8b6ff;
+  --color-lavender-deep: #845ec2;
+  --color-lavender-dark: #634087;
+  --color-cream: #fffdfa;
+  --color-cream-warm: #fff8f0;
+  --color-peach: #ffd1b3;
+  --color-peach-soft: #ffdfba;
+  --color-blue-soft: #d8f3dc;
+  --color-blue-baby: #bde0fe;
+  --color-blue-accent: #70d6ff;
+  --color-rose-gold: #d4a373;
+  --color-rose-gold-glow: rgba(212, 163, 115, 0.4);
+
+  /* Text Colors */
+  --color-text-main: #3e2e3d;
+  --color-text-muted: #6b5869;
+  --color-text-light: #8e7a8c;
+  --color-text-heading: #2d1c2c;
+
+  /* Glassmorphism Tokens */
+  --glass-bg: rgba(255, 255, 255, 0.76);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 12px 36px rgba(251, 111, 146, 0.12), 0 4px 16px rgba(132, 94, 194, 0.08);
+  --glass-blur: blur(14px);
+
+  /* Fonts */
+  --font-heading: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-handwritten: 'Caveat', cursive, sans-serif;
+
+  /* Spacing & Radii */
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-full: 9999px;
+  --max-content-width: 600px;
+
+  /* Transitions */
+  --trans-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --trans-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --trans-smooth: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   2. Reset & Base Styles
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  color: var(--color-text-main);
+  background: linear-gradient(135deg, #ffeef2 0%, #f7f0fc 45%, #eff5fc 80%, #fff6f0 100%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  position: relative;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --------------------------------------------------------------------------
+   3. Ambient Decorative Background Orbs & Canvases
+   -------------------------------------------------------------------------- */
+#ambient-canvas,
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#confetti-canvas {
+  z-index: 99;
+}
+
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+  animation: floatOrb 18s ease-in-out infinite alternate;
+}
+
+.orb-pink {
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, #ffccd5 0%, #fb6f92 80%);
+  top: -60px;
+  right: -50px;
+  animation-duration: 16s;
+}
+
+.orb-lavender {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, #e2d9f3 0%, #c8b6ff 80%);
+  bottom: 5%;
+  left: -80px;
+  animation-duration: 22s;
+}
+
+.orb-peach {
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, #ffe5d9 0%, #ffcad4 80%);
+  top: 40%;
+  right: 5%;
+  animation-duration: 19s;
+}
+
+.orb-blue {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #d0f4de 0%, #a2d2ff 80%);
+  top: 15%;
+  left: 10%;
+  animation-duration: 24s;
+}
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(25px, -30px) scale(1.08); }
+  100% { transform: translate(-20px, 25px) scale(0.94); }
+}
+
+/* --------------------------------------------------------------------------
+   4. Top Navigation & Progress Stepper
+   -------------------------------------------------------------------------- */
+.top-nav {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 10px 16px;
+  padding-top: calc(10px + env(safe-area-inset-top, 0px));
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 16px rgba(132, 94, 194, 0.05);
+  transition: var(--trans-normal);
+}
+
+.nav-content {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nav-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(251, 111, 146, 0.25);
+  color: var(--color-lavender-deep);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: var(--trans-fast);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.nav-back-btn:hover {
+  background: #ffffff;
+  color: var(--color-pink-deep);
+  border-color: var(--color-pink-vibrant);
+  transform: translateX(-2px);
+}
+
+.nav-back-btn.hidden {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Stepper Dots */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.step-dot {
+  font-size: 1rem;
+  opacity: 0.38;
+  filter: grayscale(80%);
+  transition: var(--trans-normal);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-dot.active {
+  opacity: 1;
+  filter: grayscale(0%);
+  transform: scale(1.25);
+  animation: dotBounce 0.4s ease;
+}
+
+.step-dot.completed {
+  opacity: 0.85;
+  filter: grayscale(0%);
+}
+
+.step-line {
+  width: 12px;
+  height: 2px;
+  background: rgba(132, 94, 194, 0.2);
+  border-radius: 2px;
+}
+
+@keyframes dotBounce {
+  0% { transform: scale(0.9); }
+  50% { transform: scale(1.35); }
+  100% { transform: scale(1.25); }
+}
+
+/* Audio Toggle Button */
+.sound-toggle-btn {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(200, 182, 255, 0.4);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: var(--trans-fast);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.sound-toggle-btn:hover {
+  transform: scale(1.08);
+  background: #ffffff;
+  border-color: var(--color-lavender-primary);
+}
+
+.sound-toggle-btn.playing {
+  background: #ffe5ec;
+  border-color: var(--color-pink-vibrant);
+  animation: soundPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes soundPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+
+/* --------------------------------------------------------------------------
+   5. Main Layout & Multi-Screen Switching
+   -------------------------------------------------------------------------- */
+.app-container {
+  position: relative;
+  z-index: 10;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: 16px 16px 40px;
+  padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
+  min-height: calc(100vh - 65px);
+  min-height: calc(100dvh - 65px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.screen {
+  display: none;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.screen.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.screen-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   6. Badges, Headings & Typography
+   -------------------------------------------------------------------------- */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--color-pink-deep);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(251, 111, 146, 0.3);
+  box-shadow: 0 4px 14px rgba(251, 111, 146, 0.12);
+  margin-bottom: 12px;
+}
+
+.soft-lavender-badge {
+  color: var(--color-lavender-deep);
+  border-color: rgba(200, 182, 255, 0.4);
+}
+
+.emotional-badge {
+  color: #c75269;
+  border-color: rgba(199, 82, 105, 0.3);
+}
+
+.celebration-badge {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  color: #fff;
+  background: linear-gradient(135deg, #fb6f92 0%, #ff8fa3 50%, #c8b6ff 100%);
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 16px rgba(251, 111, 146, 0.3);
+  margin-bottom: 14px;
+}
+
+.floating-badge {
+  animation: badgeFloat 3s ease-in-out infinite alternate;
+}
+
+@keyframes badgeFloat {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+.main-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.85rem;
+  line-height: 1.25;
+  color: var(--color-text-heading);
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.celebration-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 2.2rem;
+  line-height: 1.2;
+  color: var(--color-pink-deep);
+  margin-bottom: 4px;
+  text-shadow: 0 2px 10px rgba(251, 111, 146, 0.2);
+}
+
+.celebration-subtitle {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--color-lavender-deep);
+  margin-bottom: 14px;
+  letter-spacing: 0.5px;
+}
+
+.emotional-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 2.1rem;
+  line-height: 1.2;
+  color: var(--color-lavender-dark);
+  margin-bottom: 4px;
+}
+
+.emotional-subtitle {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #b05c74;
+  margin-bottom: 14px;
+}
+
+.subtitle {
+  font-size: 1.02rem;
+  color: var(--color-text-muted);
+  max-width: 420px;
+  margin: 0 auto 20px;
+  font-weight: 600;
+}
+
+.from-bhaiyoo-tag {
+  font-family: var(--font-handwritten);
+  font-size: 1.6rem;
+  color: var(--color-pink-deep);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.heart-pulse {
+  display: inline-block;
+  animation: heartBeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.22); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.18); }
+  70% { transform: scale(1); }
+}
+
+/* --------------------------------------------------------------------------
+   7. Buttons & Micro-interactions
+   -------------------------------------------------------------------------- */
+.action-btn-group {
+  margin-top: 24px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.02rem;
+  padding: 13px 26px;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  transition: transform var(--trans-fast), box-shadow var(--trans-fast), background var(--trans-fast);
+  text-decoration: none;
+  min-height: 50px;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-large {
+  width: 100%;
+  max-width: 360px;
+  padding: 15px 28px;
+  font-size: 1.08rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #fb6f92 0%, #ff8fa3 60%, #e27396 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 22px rgba(251, 111, 146, 0.38), 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #f7557d 0%, #ff758f 60%, #d85d82 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(251, 111, 146, 0.45);
+}
+
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(60deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 70%);
+  transform: rotate(25deg) translateY(-100%);
+  animation: shineSweep 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shineSweep {
+  0%, 65% { transform: rotate(25deg) translateY(-100%); }
+  100% { transform: rotate(25deg) translateY(100%); }
+}
+
+.btn-arrow {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--trans-fast);
+}
+
+.btn:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* --------------------------------------------------------------------------
+   8. SCREEN 1: 3D Interactive Sealed Envelope
+   -------------------------------------------------------------------------- */
+.envelope-wrapper {
+  margin: 10px auto 14px;
+  width: 100%;
+  max-width: 330px;
+  cursor: pointer;
+  perspective: 1000px;
+  outline: none;
+}
+
+.envelope-wrapper:focus-visible {
+  outline: 3px solid var(--color-pink-vibrant);
+  border-radius: var(--radius-md);
+}
+
+.envelope-3d {
+  position: relative;
+  width: 300px;
+  height: 200px;
+  margin: 0 auto;
+  border-radius: 12px;
+  box-shadow: 0 18px 40px rgba(132, 94, 194, 0.16), 0 6px 14px rgba(251, 111, 146, 0.12);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transform-style: preserve-3d;
+  animation: envelopeGentleFloat 4s ease-in-out infinite alternate;
+}
+
+@keyframes envelopeGentleFloat {
+  0% { transform: translateY(0) rotate(-0.5deg); }
+  100% { transform: translateY(-7px) rotate(0.8deg); }
+}
+
+.envelope-wrapper:hover .envelope-3d {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 24px 50px rgba(132, 94, 194, 0.22), 0 8px 20px rgba(251, 111, 146, 0.18);
+}
+
+/* Envelope Back */
+.env-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #e7c6ff 0%, #c8b6ff 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  z-index: 1;
+}
+
+/* Letter Inside Envelope */
+.env-letter {
+  position: absolute;
+  bottom: 8px;
+  left: 15px;
+  width: 270px;
+  height: 175px;
+  background: #fffdfa;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px dashed rgba(251, 111, 146, 0.35);
+  z-index: 2;
+  transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 14px;
+}
+
+.env-letter-heart {
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+}
+
+.env-letter-text {
+  font-family: var(--font-handwritten);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--color-pink-deep);
+  margin-bottom: 8px;
+}
+
+.env-letter-lines {
+  width: 60%;
+  height: 3px;
+  background: #ffe5ec;
+  border-radius: 2px;
+  position: relative;
+}
+
+.env-letter-lines::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 15%;
+  width: 70%;
+  height: 3px;
+  background: #ffe5ec;
+  border-radius: 2px;
+}
+
+/* Envelope Pocket (Front folded triangles) */
+.env-pocket {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.env-pocket::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 100px 150px 0 150px;
+  border-color: #ffd6e0 transparent transparent transparent;
+  transform: rotate(180deg);
+  filter: drop-shadow(0 -3px 6px rgba(132, 94, 194, 0.15));
+}
+
+.env-pocket::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 100px 0 100px 150px;
+  border-color: transparent transparent transparent #fcd5ce;
+  opacity: 0.65;
+}
+
+/* Flap with 3D folding origin */
+.env-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 110px 150px 0 150px;
+  border-color: #ffccd5 transparent transparent transparent;
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 4;
+}
+
+/* Heart-shaped Wax Seal */
+.wax-seal {
+  position: absolute;
+  top: -110px;
+  left: -24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ff4d6d 0%, #c9184a 70%, #800f2f 100%);
+  box-shadow: 0 4px 12px rgba(128, 15, 47, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, opacity 0.4s ease;
+  z-index: 5;
+}
+
+.wax-seal:hover {
+  transform: scale(1.12);
+}
+
+.seal-inner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seal-heart {
+  font-size: 1.1rem;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* Cute Floating Banner Label */
+.envelope-card-label {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--color-pink-primary);
+  box-shadow: 0 6px 18px rgba(251, 111, 146, 0.18);
+  white-space: nowrap;
+  max-width: 90%;
+  z-index: 10;
+}
+
+.envelope-label-text {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--color-lavender-dark);
+}
+
+/* Tap Hint */
+.tap-hint {
+  margin-top: 34px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  animation: tapPulse 2s infinite ease-in-out;
+}
+
+.tap-finger {
+  animation: tapBob 1s infinite alternate;
+}
+
+@keyframes tapBob {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+@keyframes tapPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* Envelope Opened State */
+.envelope-wrapper.opened .env-flap {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+
+.envelope-wrapper.opened .wax-seal {
+  transform: scale(0);
+  opacity: 0;
+}
+
+.envelope-wrapper.opened .env-letter {
+  transform: translateY(-90px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
+  z-index: 5;
+}
+
+/* --------------------------------------------------------------------------
+   9. SCREEN 2: Sorry Motu & Teddy Bear
+   -------------------------------------------------------------------------- */
+.teddy-container {
+  width: 100%;
+  max-width: 220px;
+  margin: 10px auto 14px;
+  position: relative;
+}
+
+.teddy-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 8px 20px rgba(132, 94, 194, 0.12));
+}
+
+.screen2-subtext {
+  font-size: 0.98rem;
+  color: var(--color-text-muted);
+  max-width: 380px;
+  margin: 6px auto 10px;
+  font-weight: 600;
+}
+
+/* Vector Bear Animations */
+.anim-gentle-bob {
+  animation: gentleBob 2.5s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+
+@keyframes gentleBob {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+.anim-left-ear {
+  animation: earWiggleLeft 4s ease-in-out infinite;
+  transform-origin: 68px 68px;
+}
+
+.anim-right-ear {
+  animation: earWiggleRight 4s ease-in-out infinite 0.2s;
+  transform-origin: 152px 68px;
+}
+
+@keyframes earWiggleLeft {
+  0%, 90%, 100% { transform: rotate(0deg); }
+  94% { transform: rotate(-8deg); }
+  98% { transform: rotate(4deg); }
+}
+
+@keyframes earWiggleRight {
+  0%, 90%, 100% { transform: rotate(0deg); }
+  94% { transform: rotate(8deg); }
+  98% { transform: rotate(-4deg); }
+}
+
+.anim-blush {
+  animation: blushPulse 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes blushPulse {
+  0% { opacity: 0.5; }
+  100% { opacity: 0.85; }
+}
+
+.anim-eyes {
+  animation: blinkEyes 4.5s infinite;
+  transform-origin: 110px 95px;
+}
+
+@keyframes blinkEyes {
+  0%, 96%, 100% { transform: scaleY(1); }
+  98% { transform: scaleY(0.1); }
+}
+
+.float-heart-1 {
+  animation: floatHeart 3s ease-in-out infinite alternate;
+}
+
+.float-heart-2 {
+  animation: floatHeart 3.6s ease-in-out infinite alternate 0.5s;
+}
+
+@keyframes floatHeart {
+  0% { transform: translateY(0) scale(1); opacity: 0.7; }
+  100% { transform: translateY(-10px) scale(1.15); opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   10. SCREEN 3: The Main Apology Message ❤️
+   -------------------------------------------------------------------------- */
+.letter-outer-wrapper {
+  width: 100%;
+  perspective: 1000px;
+}
+
+.letter-card {
+  width: 100%;
+  background: rgba(255, 253, 250, 0.88);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 45px rgba(251, 111, 146, 0.15), 0 4px 18px rgba(132, 94, 194, 0.08);
+  padding: 24px 20px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--trans-normal);
+}
+
+/* Airmail Decorative Strip */
+.airmail-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #fb6f92,
+    #fb6f92 12px,
+    #ffffff 12px,
+    #ffffff 20px,
+    #c8b6ff 20px,
+    #c8b6ff 32px,
+    #ffffff 32px,
+    #ffffff 40px
+  );
+}
+
+.letter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 6px;
+  margin-bottom: 12px;
+}
+
+.letter-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.letter-from-tag,
+.letter-to-tag {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.84rem;
+  color: var(--color-lavender-dark);
+}
+
+.letter-to-tag {
+  color: var(--color-pink-deep);
+}
+
+/* Postage Stamp */
+.postage-stamp {
+  width: 58px;
+  height: 68px;
+  background: #fff0f3;
+  border: 2px dashed #fb6f92;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transform: rotate(3deg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+.stamp-heart {
+  font-size: 1.4rem;
+}
+
+.stamp-text {
+  font-size: 0.5rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  color: var(--color-pink-deep);
+  text-align: center;
+  line-height: 1;
+  margin-top: 3px;
+}
+
+.letter-title {
+  font-family: var(--font-handwritten);
+  font-size: 2.2rem;
+  color: var(--color-pink-deep);
+  text-align: center;
+  margin: 6px 0 2px;
+  font-weight: 700;
+}
+
+.letter-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(251, 111, 146, 0.35), transparent);
+}
+
+.divider-flower {
+  font-size: 0.95rem;
+}
+
+/* Scrollable Letter Body */
+.letter-body {
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Scrollbar for letter */
+.letter-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.letter-body::-webkit-scrollbar-track {
+  background: rgba(255, 204, 213, 0.25);
+  border-radius: 4px;
+}
+
+.letter-body::-webkit-scrollbar-thumb {
+  background: #ffb3c6;
+  border-radius: 4px;
+}
+
+.letter-body::-webkit-scrollbar-thumb:hover {
+  background: #fb6f92;
+}
+
+.letter-para {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #3b2a3a;
+  margin-bottom: 18px;
+  text-align: left;
+  letter-spacing: 0.1px;
+}
+
+.letter-para:last-of-type {
+  margin-bottom: 22px;
+}
+
+/* Sign-off */
+.letter-signoff {
+  text-align: right;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(200, 182, 255, 0.4);
+}
+
+.signoff-sorry {
+  font-family: var(--font-handwritten);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-pink-deep);
+  line-height: 1.2;
+}
+
+.signoff-bhai {
+  font-family: var(--font-handwritten);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--color-lavender-dark);
+}
+
+/* Decision Section below letter */
+.decision-section {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.decision-question {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--color-text-heading);
+  margin-bottom: 16px;
+  line-height: 1.35;
+}
+
+.decision-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.btn-forgive {
+  background: linear-gradient(135deg, #fb6f92 0%, #ff758f 50%, #e05780 100%);
+  color: #ffffff;
+  padding: 15px 20px;
+  font-size: 1.05rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 10px 26px rgba(251, 111, 146, 0.4);
+}
+
+.btn-forgive:hover {
+  background: linear-gradient(135deg, #f7557d 0%, #ff5d7a 50%, #d44770 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 14px 32px rgba(251, 111, 146, 0.48);
+}
+
+.btn-not-forgive {
+  background: rgba(255, 255, 255, 0.9);
+  color: #7a5e78;
+  border: 1.5px solid rgba(132, 94, 194, 0.3);
+  padding: 13px 20px;
+  font-size: 0.98rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.btn-not-forgive:hover {
+  background: #ffffff;
+  color: #4b3549;
+  border-color: #845ec2;
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   11. SCREEN 4A: Forgiveness Ending & WhatsApp
+   -------------------------------------------------------------------------- */
+.happy-teddy {
+  max-width: 220px;
+}
+
+.anim-happy-bounce {
+  animation: happyBounce 0.9s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+
+@keyframes happyBounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
+
+.anim-balloon-float {
+  animation: balloonFloat 3s ease-in-out infinite alternate;
+  transform-origin: 148px 135px;
+}
+
+@keyframes balloonFloat {
+  0% { transform: rotate(-3deg); }
+  100% { transform: rotate(5deg); }
+}
+
+.anim-twinkle-1 {
+  animation: twinkle 1.5s ease-in-out infinite alternate;
+}
+
+.anim-twinkle-2 {
+  animation: twinkle 1.8s ease-in-out infinite alternate 0.4s;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.2; transform: scale(0.7); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+.message-card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-lg);
+  padding: 22px 18px;
+  box-shadow: var(--glass-shadow);
+  border: 1px solid var(--glass-border);
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.celebration-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 238, 242, 0.85) 100%);
+  border-color: rgba(251, 111, 146, 0.35);
+}
+
+.unblock-main-text {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--color-pink-deep);
+  margin-bottom: 10px;
+  line-height: 1.45;
+}
+
+.unblock-sub-text {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* WhatsApp Pre-fill Card */
+.whatsapp-action-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.whatsapp-instruction {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.wa-preview-card {
+  width: 100%;
+  max-width: 380px;
+  background: #f0fdf4;
+  border: 2px dashed #22c55e;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  position: relative;
+  cursor: pointer;
+  transition: transform var(--trans-fast), box-shadow var(--trans-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.wa-preview-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.18);
+}
+
+.wa-quote-icon {
+  font-size: 1.3rem;
+  color: #16a34a;
+  font-weight: 800;
+}
+
+.wa-message-text {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.18rem;
+  color: #15803d;
+}
+
+.wa-copy-badge {
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  background: #22c55e;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
+}
+
+.btn-whatsapp {
+  background: linear-gradient(135deg, #25d366 0%, #1ebe5d 100%);
+  color: #ffffff;
+  font-size: 1.05rem;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.38);
+}
+
+.btn-whatsapp:hover {
+  background: linear-gradient(135deg, #20ba5a 0%, #19a550 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(37, 211, 102, 0.48);
+}
+
+.wa-icon {
+  width: 22px;
+  height: 22px;
+}
+
+/* --------------------------------------------------------------------------
+   12. SCREEN 4B: Not Forgiven & Formspree Integration
+   -------------------------------------------------------------------------- */
+.sad-teddy {
+  max-width: 220px;
+}
+
+.anim-sad-tremble {
+  animation: sadTremble 3.5s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+
+@keyframes sadTremble {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-1.5deg); }
+  75% { transform: rotate(1.5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.anim-droop-left {
+  animation: droopLeft 4s ease-in-out infinite alternate;
+  transform-origin: 62px 74px;
+}
+
+.anim-droop-right {
+  animation: droopRight 4s ease-in-out infinite alternate;
+  transform-origin: 158px 74px;
+}
+
+@keyframes droopLeft {
+  0% { transform: rotate(0); }
+  100% { transform: rotate(-6deg); }
+}
+
+@keyframes droopRight {
+  0% { transform: rotate(0); }
+  100% { transform: rotate(6deg); }
+}
+
+.anim-teardrop {
+  animation: teardropFall 2.4s ease-in infinite;
+}
+
+@keyframes teardropFall {
+  0% { opacity: 0; transform: translateY(-5px); }
+  25% { opacity: 0.9; }
+  85% { opacity: 0.8; transform: translateY(14px); }
+  100% { opacity: 0; transform: translateY(18px) scale(0.5); }
+}
+
+.anim-sign-shake {
+  animation: signShake 3s ease-in-out infinite alternate;
+  transform-origin: 110px 142px;
+}
+
+@keyframes signShake {
+  0% { transform: rotate(-1deg); }
+  100% { transform: rotate(1deg); }
+}
+
+.anim-healing-heart {
+  animation: healingHeart 4s ease-in-out infinite alternate;
+}
+
+@keyframes healingHeart {
+  0% { transform: translateY(0) scale(1); filter: grayscale(70%); }
+  50% { transform: translateY(-8px) scale(1.1); filter: grayscale(20%); }
+  100% { transform: translateY(0) scale(1); filter: grayscale(70%); }
+}
+
+.emotional-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(200, 182, 255, 0.45);
+  text-align: left;
+  padding: 24px 20px;
+}
+
+.emotional-para {
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: #433245;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.emotional-para.highlight-plea {
+  font-family: var(--font-handwritten);
+  font-size: 1.6rem;
+  color: var(--color-pink-deep);
+  font-weight: 700;
+  margin: 10px 0;
+}
+
+.emotional-para.final-plea {
+  font-weight: 700;
+  color: var(--color-lavender-dark);
+  margin-bottom: 0;
+}
+
+/* Sister's Message Form Section */
+.sister-message-section {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-lg);
+  padding: 24px 18px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  margin-top: 10px;
+}
+
+.form-header {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.form-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--color-pink-deep);
+  margin-bottom: 4px;
+}
+
+.form-subtitle {
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.sister-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.textarea-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+textarea#sister-message-text {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  padding-bottom: 28px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid rgba(200, 182, 255, 0.5);
+  background: #fffdfa;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-text-main);
+  resize: vertical;
+  outline: none;
+  transition: border-color var(--trans-fast), box-shadow var(--trans-fast);
+  line-height: 1.6;
+}
+
+textarea#sister-message-text:focus {
+  border-color: var(--color-pink-vibrant);
+  box-shadow: 0 0 0 4px rgba(251, 111, 146, 0.18);
+  background: #ffffff;
+}
+
+textarea#sister-message-text::placeholder {
+  color: #ad9ba9;
+  font-style: italic;
+}
+
+.char-count {
+  position: absolute;
+  bottom: 8px;
+  right: 14px;
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  pointer-events: none;
+}
+
+/* Alert Boxes */
+.form-alert {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  font-weight: 600;
+  text-align: left;
+  transition: var(--trans-normal);
+}
+
+.form-alert.hidden {
+  display: none;
+}
+
+.form-alert.alert-error {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+}
+
+.form-alert.alert-warning {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #b45309;
+}
+
+.btn-send-form {
+  background: linear-gradient(135deg, #845ec2 0%, #a17fe0 50%, #fb6f92 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(132, 94, 194, 0.35);
+}
+
+.btn-send-form:hover {
+  background: linear-gradient(135deg, #744bb5 0%, #906ed1 50%, #f7557d 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(132, 94, 194, 0.42);
+}
+
+.btn-send-form:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+.btn-spinner.hidden {
+  display: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Form Success Card */
+.form-success-card {
+  padding: 30px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #fff0f3 0%, #f3effc 100%);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-pink-primary);
+  animation: fadeInScale 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.form-success-card.hidden {
+  display: none;
+}
+
+@keyframes fadeInScale {
+  0% { opacity: 0; transform: scale(0.92); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.success-envelope-anim {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  position: relative;
+  display: inline-block;
+}
+
+.flying-hearts {
+  position: absolute;
+  top: -12px;
+  right: -14px;
+  font-size: 1.6rem;
+  animation: floatHeart 2s ease-in-out infinite alternate;
+}
+
+.success-heading {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.35rem;
+  color: var(--color-pink-deep);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.success-subheading {
+  font-size: 1.02rem;
+  color: var(--color-lavender-dark);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.success-sparkles {
+  margin-top: 14px;
+  font-size: 1.2rem;
+  letter-spacing: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   13. Toast Notifications
+   -------------------------------------------------------------------------- */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  width: 90%;
+  max-width: 380px;
+}
+
+.toast {
+  background: rgba(45, 28, 44, 0.92);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: var(--radius-full);
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  animation: toastPop 0.35s cubic-bezier(0.16, 1, 0.3, 1), toastFadeOut 0.4s ease forwards 2.6s;
+  pointer-events: auto;
+}
+
+@keyframes toastPop {
+  0% { opacity: 0; transform: translateY(16px) scale(0.92); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toastFadeOut {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-8px); }
+}
+
+/* --------------------------------------------------------------------------
+   14. Responsive Layout Adjustments
+   -------------------------------------------------------------------------- */
+
+/* Small Phones (<360px) */
+@media (max-width: 359px) {
+  html {
+    font-size: 14px;
+  }
+
+  .envelope-3d {
+    width: 270px;
+    height: 180px;
+  }
+
+  .env-letter {
+    width: 240px;
+    height: 155px;
+    left: 15px;
+  }
+
+  .env-pocket::before {
+    border-width: 90px 135px 0 135px;
+  }
+
+  .env-flap {
+    border-width: 95px 135px 0 135px;
+  }
+
+  .main-title {
+    font-size: 1.6rem;
+  }
+
+  .celebration-title,
+  .emotional-title {
+    font-size: 1.85rem;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    font-size: 0.96rem;
+  }
+
+  .envelope-label-text {
+    font-size: 0.72rem;
+  }
+}
+
+/* Standard Mobile (360px - 599px) */
+@media (min-width: 360px) and (max-width: 599px) {
+  .envelope-3d {
+    width: 290px;
+    height: 195px;
+  }
+
+  .env-pocket::before {
+    border-width: 100px 145px 0 145px;
+  }
+
+  .env-flap {
+    border-width: 105px 145px 0 145px;
+  }
+}
+
+/* Tablets & Desktops (>= 600px) */
+@media (min-width: 600px) {
+  .app-container {
+    padding: 30px 24px 60px;
+  }
+
+  .main-title {
+    font-size: 2.25rem;
+  }
+
+  .celebration-title {
+    font-size: 2.7rem;
+  }
+
+  .emotional-title {
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.12rem;
+  }
+
+  .envelope-3d {
+    width: 340px;
+    height: 220px;
+  }
+
+  .env-letter {
+    width: 305px;
+    height: 190px;
+    left: 17px;
+  }
+
+  .env-pocket::before {
+    border-width: 110px 170px 0 170px;
+  }
+
+  .env-flap {
+    border-width: 120px 170px 0 170px;
+  }
+
+  .wax-seal {
+    top: -120px;
+    left: -26px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .seal-inner {
+    width: 38px;
+    height: 38px;
+  }
+
+  .letter-card {
+    padding: 34px 32px 30px;
+  }
+
+  .letter-body {
+    max-height: 440px;
+  }
+
+  .letter-para {
+    font-size: 1.12rem;
+  }
+
+  .decision-buttons {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .decision-buttons .btn {
+    flex: 1;
+    max-width: 260px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15. Accessibility & Reduced Motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .bg-orb {
+    display: none;
+  }
+
+  .screen {
+    transform: none !important;
+  }
+}
+
