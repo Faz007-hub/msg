@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 320" width="100%" height="100%">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <style>
+    .cake-bhai { animation: cakeBhaiBob 2.5s ease-in-out infinite alternate; transform-origin: center bottom; }
+    @keyframes cakeBhaiBob {
+      0% { transform: translateY(0px) rotate(-1deg); }
+      100% { transform: translateY(-6px) rotate(1deg); }
+    }
+  </style>
+  <g class="cake-bhai">
+    <path d="M90 170 C70 180 60 210 60 280 C60 295 220 295 220 280 C220 210 210 180 190 170 Z" fill="#7EC8E3" stroke="#3D2817" stroke-width="3"/>
+    <ellipse cx="140" cy="110" rx="50" ry="52" fill="#FFE0CE" stroke="#3D2817" stroke-width="3"/>
+    <path d="M92 105 C88 62 114 45 140 45 C166 45 192 62 188 105 C182 76 166 60 140 60 C114 60 98 76 92 105 Z" fill="#4A2E18"/>
+    <ellipse cx="90" cy="116" rx="8" ry="11" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+    <ellipse cx="190" cy="116" rx="8" ry="11" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+
+    <polygon points="128,45 152,45 140,15" fill="#FF6584" stroke="#3D2817" stroke-width="2"/>
+    <circle cx="140" cy="15" r="4" fill="#FFD166"/>
+
+    <path d="M90 100 C94 75 118 60 140 60 C162 60 186 75 190 100 C176 84 162 84 155 92 C148 76 132 76 125 90 C118 82 102 86 90 100 Z" fill="#4A2E18" stroke="#3D2817" stroke-width="2"/>
+
+    <ellipse cx="118" cy="112" rx="8" ry="11" fill="#2B170E"/>
+    <circle cx="115" cy="108" r="3.5" fill="#FFFFFF"/>
+    <ellipse cx="162" cy="112" rx="8" ry="11" fill="#2B170E"/>
+    <circle cx="159" cy="108" r="3.5" fill="#FFFFFF"/>
+
+    <ellipse cx="106" cy="122" rx="10" ry="7" fill="#FFAAA6" opacity="0.85"/>
+    <ellipse cx="174" cy="122" rx="10" ry="7" fill="#FFAAA6" opacity="0.85"/>
+    <path d="M130 125 Q140 135 150 125" stroke="#C85A6A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+    <path d="M80 215 C100 230 180 230 200 215" stroke="#7EC8E3" stroke-width="14" stroke-linecap="round" fill="none"/>
+    <ellipse cx="95" cy="222" rx="9" ry="8" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+    <ellipse cx="185" cy="222" rx="9" ry="8" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+    <ellipse cx="140" cy="225" rx="75" ry="12" fill="#FFE8B8" stroke="#E0A938" stroke-width="2.5"/>
+  </g>
+</svg>

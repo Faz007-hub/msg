@@ -1,727 +1,897 @@
 /**
  * ============================================================================
- * A SPECIAL SORRY WEBSITE FOR MY SISTER ❤️
- * Pure Vanilla JavaScript Module
+ * SORRY MOTU! ❤️🥺 — Interactive Apology Website Engine
+ * Vanilla JavaScript (ES6+) — Mobile-First, Accessible & Robust
  * ============================================================================
  */
 
-(function () {
-  'use strict';
+/* ============================================================================
+   1. USER CONFIGURATION SETTINGS
+   ============================================================================ */
 
-  /* --------------------------------------------------------------------------
-     1. CONFIGURATION
-     -------------------------------------------------------------------------- */
-  /**
-   * FORMSPREE CONFIGURATION:
-   * Replace 'YOUR_FORMSPREE_ENDPOINT' with your actual Formspree endpoint URL.
-   * Example: 'https://formspree.io/f/xyzabk'
-   */
-  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mljbbvke';
+/**
+ * VOICE SYSTEM CONFIGURATION
+ * Options:
+ *   - "generated": Uses the cute AI-generated voice saying "Sorry Motu!"
+ *   - "custom": Uses your own recorded audio file!
+ *
+ * To use your own voice:
+ * 1. Record yourself saying "Sorry Motu!" or your heartfelt apology.
+ * 2. Save the file as: assets/audio/sorry-motu-custom.mp3
+ * 3. Change VOICE_MODE from "generated" to "custom" below.
+ */
+const VOICE_MODE = "generated"; // "generated" | "custom"
 
-  /**
-   * WhatsApp Configuration:
-   * International format for 032322682176 -> 9232322682176
-   */
-  const WHATSAPP_PHONE = '9232322682176';
-  const WHATSAPP_MESSAGE = 'Bhaiyoo maaf kia ❤️';
-  const WHATSAPP_URL = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+const VOICE_FILES = {
+  generated: "assets/audio/sorry-motu-generated.mp3",
+  custom: "assets/audio/sorry-motu-custom.mp3"
+};
 
-  /* --------------------------------------------------------------------------
-     2. DOM ELEMENTS
-     -------------------------------------------------------------------------- */
-  const screens = {
-    '1': document.getElementById('screen-1'),
-    '2': document.getElementById('screen-2'),
-    '3': document.getElementById('screen-3'),
-    '4a': document.getElementById('screen-4a'),
-    '4b': document.getElementById('screen-4b')
-  };
+/**
+ * WHATSAPP CONFIGURATION
+ * Put your WhatsApp phone number with country code (no '+' or spaces).
+ * Example for Pakistan: "923001234567"
+ * If left empty, WhatsApp will open with the pre-filled message, letting Motu choose your chat.
+ */
+const WHATSAPP_PHONE_NUMBER = ""; // e.g. "923001234567"
+const WHATSAPP_MESSAGE = "Bhai, maaf kar diya. ❤️";
 
-  const navBackBtn = document.getElementById('nav-back-btn');
-  const stepper = document.getElementById('stepper');
-  const stepDots = stepper ? stepper.querySelectorAll('.step-dot') : [];
-  const soundToggleBtn = document.getElementById('sound-toggle-btn');
-  const soundIcon = document.getElementById('sound-icon');
+/**
+ * EMAILJS CONFIGURATION
+ * For receiving Motu's reply directly to: fazulisalm61@gmail.com
+ * Sign up free at https://www.emailjs.com/
+ * Replace these placeholder IDs with your actual EmailJS credentials:
+ */
+const EMAILJS_CONFIG = {
+  SERVICE_ID: "service_placeholder",     // e.g. "service_abc123"
+  TEMPLATE_ID: "template_placeholder",   // e.g. "template_xyz456"
+  PUBLIC_KEY: "public_key_placeholder",  // e.g. "user_123456789"
+  FALLBACK_EMAIL: "fazulisalm61@gmail.com",
+  WEBSITE_TITLE: "SORRY MOTU! 🥺❤️"
+};
 
-  // Screen 1 Elements
-  const envelopeWrapper = document.getElementById('envelope-wrapper');
-  const btnScreen1Forward = document.getElementById('btn-screen1-forward');
 
-  // Screen 2 Elements
-  const btnScreen2Reveal = document.getElementById('btn-screen2-reveal');
+/* ============================================================================
+   2. GLOBAL STATE
+   ============================================================================ */
+const State = {
+  currentScreen: 1,
+  totalScreens: 9,
+  isSoundMuted: true,
+  isVoicePlaying: false,
+  isTransitioning: false,
+  hasOpenedEnvelope: false,
+  secretDiscovered: false
+};
 
-  // Screen 3 Elements
-  const btnForgive = document.getElementById('btn-forgive');
-  const btnNotForgive = document.getElementById('btn-not-forgive');
 
-  // Screen 4A Elements
-  const btnSendWhatsapp = document.getElementById('btn-send-whatsapp');
-  const waPreviewCard = document.getElementById('wa-preview-card');
-  const waCopyBadge = document.getElementById('wa-copy-badge');
-  const waBadgeText = document.getElementById('wa-badge-text');
+/* ============================================================================
+   3. AUDIO MANAGER & WEB AUDIO API FALLBACK
+   ============================================================================ */
+class AudioManager {
+  constructor() {
+    this.voiceAudio = document.getElementById("audio-voice");
+    this.bgmAudio = document.getElementById("audio-bgm");
+    this.sfxAudio = document.getElementById("audio-sfx");
+    
+    // Set sources
+    this.bgmAudio.src = "assets/audio/background-music.mp3";
+    this.bgmAudio.volume = 0.28;
+    this.bgmAudio.loop = true;
 
-  // Screen 4B Elements
-  const sisterForm = document.getElementById('sister-message-form');
-  const sisterTextarea = document.getElementById('sister-message-text');
-  const charCounter = document.getElementById('char-counter');
-  const formAlert = document.getElementById('form-alert');
-  const btnSendMessage = document.getElementById('btn-send-message');
-  const btnSpinner = document.getElementById('btn-spinner');
-  const btnText = document.getElementById('btn-text');
-  const formSuccessCard = document.getElementById('form-success-card');
+    // Set voice source based on configuration
+    this.setupVoiceSource();
 
-  // Toast Container
-  const toastContainer = document.getElementById('toast-container');
+    // Initialize Web Audio Context (lazy created on user gesture)
+    this.audioCtx = null;
 
-  /* --------------------------------------------------------------------------
-     3. APP STATE & NAVIGATION
-     -------------------------------------------------------------------------- */
-  let currentScreenId = '1';
-  const screenHistory = ['1'];
-  let isEnvelopeOpening = false;
-  let isSubmittingMessage = false;
+    // Sound toggle button UI
+    this.soundToggleBtn = document.getElementById("sound-toggle-btn");
+    this.soundIcon = document.getElementById("sound-icon");
 
-  /**
-   * Update the visual step indicator
-   */
-  function updateStepper(screenId) {
-    let stepNum = 1;
-    if (screenId === '1') stepNum = 1;
-    else if (screenId === '2') stepNum = 2;
-    else if (screenId === '3') stepNum = 3;
-    else if (screenId === '4a' || screenId === '4b') stepNum = 4;
+    this.bindEvents();
+  }
 
-    stepDots.forEach((dot) => {
-      const dotStep = parseInt(dot.getAttribute('data-step'), 10);
-      dot.classList.remove('active', 'completed');
-      if (dotStep === stepNum) {
-        dot.classList.add('active');
-      } else if (dotStep < stepNum) {
-        dot.classList.add('completed');
+  setupVoiceSource() {
+    const src = VOICE_MODE === "custom" ? VOICE_FILES.custom : VOICE_FILES.generated;
+    this.voiceAudio.src = src;
+    console.log(`[Voice System] Mode: "${VOICE_MODE}", Source: "${src}"`);
+  }
+
+  initAudioContext() {
+    if (!this.audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) {
+        this.audioCtx = new AudioContext();
       }
-    });
-
-    // Toggle Back button visibility
-    if (screenHistory.length > 1) {
-      navBackBtn.classList.remove('hidden');
-    } else {
-      navBackBtn.classList.add('hidden');
+    }
+    if (this.audioCtx && this.audioCtx.state === "suspended") {
+      this.audioCtx.resume();
     }
   }
 
-  /**
-   * Transition smoothly to a screen
-   */
-  function goToScreen(targetId, isBackNavigation = false) {
-    if (!screens[targetId] || targetId === currentScreenId) return;
+  bindEvents() {
+    this.soundToggleBtn.addEventListener("click", () => this.toggleSound());
 
-    const fromScreen = screens[currentScreenId];
-    const toScreen = screens[targetId];
+    // Sync waveform with voice playback
+    this.voiceAudio.addEventListener("play", () => {
+      State.isVoicePlaying = true;
+      document.getElementById("waveform").classList.add("playing");
+      document.getElementById("voice-status-text").textContent = "Bhaiyoo is speaking... 🥺❤️";
+      document.getElementById("voice-play-icon").textContent = "⏸️";
+    });
 
-    // Fade out current screen
-    fromScreen.style.opacity = '0';
-    fromScreen.style.transform = isBackNavigation ? 'translateY(16px)' : 'translateY(-16px)';
+    this.voiceAudio.addEventListener("ended", () => {
+      State.isVoicePlaying = false;
+      document.getElementById("waveform").classList.remove("playing");
+      document.getElementById("voice-status-text").textContent = "Bhaiyoo finished speaking ❤️";
+      document.getElementById("voice-play-icon").textContent = "🔊";
+    });
+
+    this.voiceAudio.addEventListener("pause", () => {
+      State.isVoicePlaying = false;
+      document.getElementById("waveform").classList.remove("playing");
+      document.getElementById("voice-play-icon").textContent = "🔊";
+    });
+
+    this.voiceAudio.addEventListener("error", (e) => {
+      console.warn("[Voice Audio] File loading note, falling back to Web Speech:", e);
+    });
+  }
+
+  toggleSound(forceState) {
+    this.initAudioContext();
+    if (typeof forceState === "boolean") {
+      State.isSoundMuted = !forceState;
+    } else {
+      State.isSoundMuted = !State.isSoundMuted;
+    }
+
+    if (State.isSoundMuted) {
+      this.bgmAudio.pause();
+      this.soundIcon.textContent = "🔇";
+      showToast("Music paused 🔇");
+    } else {
+      this.bgmAudio.play().catch(() => {
+        // Fallback procedural soft music box if mp3 autoplay fails
+        this.playProceduralBgm();
+      });
+      this.soundIcon.textContent = "🔊";
+      showToast("Playing sweet background music 🎵");
+    }
+  }
+
+  playVoice() {
+    this.initAudioContext();
+    if (State.isVoicePlaying) {
+      this.voiceAudio.pause();
+      this.voiceAudio.currentTime = 0;
+      return;
+    }
+
+    // Attempt playback of audio file
+    const playPromise = this.voiceAudio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch((err) => {
+        console.warn("[Voice Audio] Autoplay/file blocked, using speech synthesis backup:", err);
+        this.playSpeechSynthesisFallback();
+      });
+    }
+  }
+
+  playSpeechSynthesisFallback() {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance("Sorry Motu!");
+      utterance.pitch = 1.35; // Cute higher pitch
+      utterance.rate = 0.85;  // Gentle sweet tempo
+      utterance.lang = "hi-IN";
+
+      utterance.onstart = () => {
+        document.getElementById("waveform").classList.add("playing");
+        document.getElementById("voice-status-text").textContent = "Bhaiyoo is speaking... 🥺❤️";
+      };
+      utterance.onend = () => {
+        document.getElementById("waveform").classList.remove("playing");
+        document.getElementById("voice-status-text").textContent = "Bhaiyoo finished speaking ❤️";
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  playSfx(type) {
+    this.initAudioContext();
+    if (type === "envelope") {
+      this.sfxAudio.src = "assets/audio/envelope-open.mp3";
+      this.sfxAudio.play().catch(() => this.playProceduralChime([523.25, 659.25, 783.99, 1046.5]));
+    } else if (type === "celebration") {
+      this.sfxAudio.src = "assets/audio/celebration.mp3";
+      this.sfxAudio.play().catch(() => this.playProceduralChime([523.25, 659.25, 783.99, 1046.5, 1318.5]));
+    } else if (type === "pop") {
+      this.playProceduralPop();
+    } else if (type === "sparkle") {
+      this.playProceduralSparkle();
+    }
+  }
+
+  playProceduralPop() {
+    if (!this.audioCtx) return;
+    try {
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(440, this.audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, this.audioCtx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.15, this.audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.08);
+    } catch (_) {}
+  }
+
+  playProceduralChime(notes) {
+    if (!this.audioCtx) return;
+    try {
+      notes.forEach((freq, idx) => {
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime + idx * 0.1);
+        gain.gain.setValueAtTime(0.12, this.audioCtx.currentTime + idx * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + idx * 0.1 + 0.6);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(this.audioCtx.currentTime + idx * 0.1);
+        osc.stop(this.audioCtx.currentTime + idx * 0.1 + 0.65);
+      });
+    } catch (_) {}
+  }
+
+  playProceduralSparkle() {
+    if (!this.audioCtx) return;
+    try {
+      [784, 988, 1175, 1568].forEach((f, i) => {
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(f, this.audioCtx.currentTime + i * 0.06);
+        gain.gain.setValueAtTime(0.1, this.audioCtx.currentTime + i * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + i * 0.06 + 0.4);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(this.audioCtx.currentTime + i * 0.06);
+        osc.stop(this.audioCtx.currentTime + i * 0.06 + 0.45);
+      });
+    } catch (_) {}
+  }
+
+  playProceduralBgm() {
+    // Graceful silent fallback if Web Audio is suspended
+  }
+}
+
+
+/* ============================================================================
+   4. SCREEN NAVIGATION ENGINE
+   ============================================================================ */
+class ScreenNavigator {
+  constructor(audioManager) {
+    this.audio = audioManager;
+    this.progressBar = document.getElementById("progress-bar-fill");
+    this.stepIndicator = document.getElementById("step-indicator");
+    this.mainStage = document.getElementById("main-stage");
+
+    this.bindNavigationButtons();
+    this.updateProgress(1);
+  }
+
+  bindNavigationButtons() {
+    // Envelope interactions
+    const envelopeWrapper = document.getElementById("envelope-wrapper");
+    const btnOpenEnvelope = document.getElementById("btn-open-envelope");
+
+    const triggerOpen = () => this.handleEnvelopeOpen();
+    envelopeWrapper.addEventListener("click", triggerOpen);
+    btnOpenEnvelope.addEventListener("click", triggerOpen);
+
+    // Screen 2 Next
+    document.getElementById("btn-screen2-next").addEventListener("click", () => {
+      this.goToScreen(3);
+    });
+
+    // Screen 3 Next
+    document.getElementById("btn-screen3-next").addEventListener("click", () => {
+      this.goToScreen(4);
+    });
+
+    // Screen 4 Next
+    document.getElementById("btn-screen4-next").addEventListener("click", () => {
+      this.goToScreen(5);
+    });
+
+    // Screen 5 Next
+    document.getElementById("btn-screen5-next").addEventListener("click", () => {
+      this.goToScreen(6);
+    });
+
+    // Screen 6 Next
+    document.getElementById("btn-screen6-next").addEventListener("click", () => {
+      this.goToScreen(7);
+    });
+
+    // Screen 8 Next
+    document.getElementById("btn-screen8-next").addEventListener("click", () => {
+      this.goToScreen(9);
+    });
+
+    // Replay Story Button
+    document.getElementById("btn-replay-story").addEventListener("click", () => {
+      this.resetStory();
+    });
+
+    // Back buttons
+    document.querySelectorAll(".btn-back").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const prev = parseInt(e.currentTarget.getAttribute("data-prev"), 10);
+        if (prev >= 1) {
+          this.goToScreen(prev);
+        }
+      });
+    });
+  }
+
+  handleEnvelopeOpen() {
+    if (State.hasOpenedEnvelope || State.isTransitioning) return;
+    State.hasOpenedEnvelope = true;
+    State.isTransitioning = true;
+
+    // Unmute music if user clicked
+    if (State.isSoundMuted) {
+      this.audio.toggleSound(true);
+    }
+
+    const envelope = document.getElementById("envelope");
+    envelope.classList.add("opening");
+    this.audio.playSfx("envelope");
+
+    // Burst confetti particles around the envelope
+    createConfettiBurst(window.innerWidth / 2, window.innerHeight / 2, 45);
 
     setTimeout(() => {
-      fromScreen.classList.remove('active');
-      fromScreen.style.display = 'none';
+      envelope.classList.add("opened");
+      envelope.classList.remove("opening");
+    }, 450);
 
-      // Prepare target screen
-      toScreen.style.display = 'block';
-      toScreen.style.opacity = '0';
-      toScreen.style.transform = isBackNavigation ? 'translateY(-16px)' : 'translateY(16px)';
+    setTimeout(() => {
+      State.isTransitioning = false;
+      this.goToScreen(2);
+    }, 1300);
+  }
 
-      // Trigger reflow
-      void toScreen.offsetWidth;
+  goToScreen(screenNum) {
+    if (screenNum < 1 || screenNum > State.totalScreens || State.isTransitioning) return;
+    State.isTransitioning = true;
 
-      toScreen.classList.add('active');
-      toScreen.style.opacity = '1';
-      toScreen.style.transform = 'translateY(0)';
+    const currentScreenEl = document.getElementById(`screen-${State.currentScreen}`);
+    const nextScreenEl = document.getElementById(`screen-${screenNum}`);
 
-      currentScreenId = targetId;
+    if (currentScreenEl) {
+      currentScreenEl.classList.remove("active");
+    }
 
-      if (!isBackNavigation) {
-        screenHistory.push(targetId);
+    setTimeout(() => {
+      if (nextScreenEl) {
+        nextScreenEl.classList.add("active");
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      updateStepper(targetId);
-
-      // Trigger screen-specific special effects
-      if (targetId === '4a') {
-        launchCelebrationConfetti();
-      }
-
-      // Smooth scroll back to top of container
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      State.currentScreen = screenNum;
+      this.updateProgress(screenNum);
+      this.onScreenActivated(screenNum);
+      State.isTransitioning = false;
     }, 280);
   }
 
-  /**
-   * Handle Back Navigation
-   */
-  function goBack() {
-    if (screenHistory.length <= 1) return;
-    screenHistory.pop(); // Remove current
-    const previousScreenId = screenHistory[screenHistory.length - 1];
-    goToScreen(previousScreenId, true);
+  updateProgress(screenNum) {
+    const percentage = Math.round((screenNum / State.totalScreens) * 100);
+    this.progressBar.style.width = `${percentage}%`;
+    this.stepIndicator.textContent = `${screenNum} / ${State.totalScreens}`;
   }
 
-  navBackBtn.addEventListener('click', goBack);
+  onScreenActivated(screenNum) {
+    this.audio.playProceduralPop();
 
-  /* --------------------------------------------------------------------------
-     4. SCREEN 1: ENVELOPE OPENING INTERACTION
-     -------------------------------------------------------------------------- */
-  function openEnvelopeAndProceed() {
-    if (isEnvelopeOpening) return;
-    isEnvelopeOpening = true;
-
-    // Trigger visual envelope opening
-    envelopeWrapper.classList.add('opened');
-
-    // Create heart burst at envelope position
-    const rect = envelopeWrapper.getBoundingClientRect();
-    createHeartBurst(rect.left + rect.width / 2, rect.top + rect.height / 2);
-
-    // Audio chime if enabled
-    playChime();
-
-    // After animation finishes, transition to Screen 2
-    setTimeout(() => {
-      goToScreen('2');
-      isEnvelopeOpening = false;
-    }, 850);
-  }
-
-  if (envelopeWrapper) {
-    envelopeWrapper.addEventListener('click', openEnvelopeAndProceed);
-    envelopeWrapper.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openEnvelopeAndProceed();
-      }
-    });
-  }
-
-  if (btnScreen1Forward) {
-    btnScreen1Forward.addEventListener('click', openEnvelopeAndProceed);
-  }
-
-  /* --------------------------------------------------------------------------
-     5. SCREEN 2: SORRY MOTU INTERACTIONS
-     -------------------------------------------------------------------------- */
-  if (btnScreen2Reveal) {
-    btnScreen2Reveal.addEventListener('click', () => {
-      playChime();
-      goToScreen('3');
-    });
-  }
-
-  /* --------------------------------------------------------------------------
-     6. SCREEN 3: DECISION (FORGIVE / NOT FORGIVE)
-     -------------------------------------------------------------------------- */
-  if (btnForgive) {
-    btnForgive.addEventListener('click', () => {
-      playChime(true);
-      goToScreen('4a');
-    });
-  }
-
-  if (btnNotForgive) {
-    btnNotForgive.addEventListener('click', () => {
-      playSadChime();
-      goToScreen('4b');
-    });
-  }
-
-  /* --------------------------------------------------------------------------
-     7. SCREEN 4A: FORGIVENESS & WHATSAPP INTEGRATION
-     -------------------------------------------------------------------------- */
-  /**
-   * Copy message to clipboard and open WhatsApp
-   */
-  async function handleWhatsAppShare() {
-    let copySuccess = false;
-
-    // Attempt Clipboard Copy
-    try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(WHATSAPP_MESSAGE);
-        copySuccess = true;
-      } else {
-        // Fallback for older browsers / non-HTTPS
-        const tempInput = document.createElement('textarea');
-        tempInput.value = WHATSAPP_MESSAGE;
-        tempInput.style.position = 'fixed';
-        tempInput.style.left = '-9999px';
-        document.body.appendChild(tempInput);
-        tempInput.focus();
-        tempInput.select();
-        copySuccess = document.execCommand('copy');
-        document.body.removeChild(tempInput);
-      }
-    } catch (err) {
-      console.warn('Clipboard write failed:', err);
-    }
-
-    // Feedback UI
-    if (waBadgeText) {
-      waBadgeText.textContent = 'Copied! ✨';
-      waCopyBadge.style.background = '#15803d';
+    // Screen 2: Trigger voice automatically if possible
+    if (screenNum === 2) {
       setTimeout(() => {
-        waBadgeText.textContent = 'Tap to copy 📋';
-        waCopyBadge.style.background = '#22c55e';
-      }, 3000);
+        this.audio.playVoice();
+      }, 500);
     }
 
-    showToast('Message copied! Opening WhatsApp for Bhaiyoo... 💚');
+    // Screen 6: Light cake candles in sequence
+    if (screenNum === 6) {
+      this.animateCakeCandles();
+    }
 
-    // Slight delay to show feedback then open WhatsApp
-    setTimeout(() => {
-      window.open(WHATSAPP_URL, '_blank', 'noopener,noreferrer');
-    }, 400);
+    // Screen 8: Trigger celebration confetti cannon
+    if (screenNum === 8) {
+      this.audio.playSfx("celebration");
+      triggerGrandCelebration();
+    }
   }
 
-  if (btnSendWhatsapp) {
-    btnSendWhatsapp.addEventListener('click', handleWhatsAppShare);
-  }
+  animateCakeCandles() {
+    const flames = [
+      document.getElementById("flame-1"),
+      document.getElementById("flame-2"),
+      document.getElementById("flame-3")
+    ];
 
-  if (waPreviewCard) {
-    waPreviewCard.addEventListener('click', handleWhatsAppShare);
-  }
+    flames.forEach((flame) => flame.classList.remove("lit"));
 
-  /* --------------------------------------------------------------------------
-     8. SCREEN 4B: FORMSPREE MESSAGE SUBMISSION
-     -------------------------------------------------------------------------- */
-  if (sisterTextarea) {
-    // Live Character Counter
-    sisterTextarea.addEventListener('input', () => {
-      const len = sisterTextarea.value.length;
-      charCounter.textContent = len;
-      if (formAlert.classList.contains('alert-error')) {
-        formAlert.classList.add('hidden');
-      }
+    flames.forEach((flame, index) => {
+      setTimeout(() => {
+        flame.classList.add("lit");
+        this.audio.playProceduralSparkle();
+      }, 500 + index * 350);
     });
+
+    setTimeout(() => {
+      createConfettiBurst(window.innerWidth / 2, window.innerHeight * 0.45, 30);
+    }, 1600);
   }
 
-  /**
-   * Show alert inside the form
-   */
-  function showFormAlert(message, type = 'error') {
-    formAlert.textContent = message;
-    formAlert.className = `form-alert alert-${type}`;
-    formAlert.classList.remove('hidden');
+  resetStory() {
+    State.hasOpenedEnvelope = false;
+    State.secretDiscovered = false;
+    const envelope = document.getElementById("envelope");
+    envelope.classList.remove("opened", "opening");
+
+    // Reset decision screen states
+    document.getElementById("main-decision-btns").style.display = "flex";
+    document.getElementById("sad-plea-card").style.display = "none";
+    document.getElementById("need-time-card").style.display = "none";
+    document.getElementById("decision-img").src = "assets/characters/siblings-intro.svg";
+
+    // Reset hug scene
+    document.getElementById("hug-scene").style.display = "none";
+
+    this.goToScreen(1);
+    showToast("Story restarted from beginning ❤️");
+  }
+}
+
+
+/* ============================================================================
+   5. INTERACTIVE FEATURES & SURPRISES
+   ============================================================================ */
+
+function setupVoiceControls(audioManager) {
+  const btnPlayVoice = document.getElementById("btn-play-voice");
+  const btnReplayVoice = document.getElementById("btn-replay-voice");
+
+  btnPlayVoice.addEventListener("click", () => {
+    audioManager.playVoice();
+  });
+
+  btnReplayVoice.addEventListener("click", () => {
+    audioManager.voiceAudio.currentTime = 0;
+    audioManager.playVoice();
+    showToast("Replaying Bhaiyoo's voice 🔊");
+  });
+}
+
+function setupSecretHeartSurprise(audioManager) {
+  const secretHeartBtn = document.getElementById("secret-heart-btn");
+  const secretModal = document.getElementById("secret-modal");
+  const btnCloseSecret = document.getElementById("btn-close-secret");
+  const modalCloseIcon = document.getElementById("modal-close-icon");
+  const hugScene = document.getElementById("hug-scene");
+
+  const openSecret = () => {
+    secretModal.classList.add("active");
+    audioManager.playSfx("sparkle");
+    createConfettiBurst(window.innerWidth / 2, window.innerHeight / 2, 40);
+  };
+
+  const closeSecret = () => {
+    secretModal.classList.remove("active");
+    State.secretDiscovered = true;
+    hugScene.style.display = "block";
+    hugScene.scrollIntoView({ behavior: "smooth", block: "center" });
+    audioManager.playProceduralPop();
+    showToast("Ek hug toh banta hai na? 🥺❤️");
+  };
+
+  secretHeartBtn.addEventListener("click", openSecret);
+  btnCloseSecret.addEventListener("click", closeSecret);
+  modalCloseIcon.addEventListener("click", closeSecret);
+
+  // Close on backdrop tap
+  secretModal.addEventListener("click", (e) => {
+    if (e.target === secretModal) closeSecret();
+  });
+}
+
+function setupDecisionScreen(navigator, audioManager) {
+  const btnYes = document.getElementById("btn-choice-yes");
+  const btnNo = document.getElementById("btn-choice-no");
+  const btnNeedTime = document.getElementById("btn-need-time");
+  const btnReconsider = document.getElementById("btn-reconsider");
+  const btnBackToChoice = document.getElementById("btn-back-to-choice");
+
+  const mainBtns = document.getElementById("main-decision-btns");
+  const sadPleaCard = document.getElementById("sad-plea-card");
+  const needTimeCard = document.getElementById("need-time-card");
+  const decisionImg = document.getElementById("decision-img");
+
+  // YES INTERACTION
+  btnYes.addEventListener("click", () => {
+    audioManager.playSfx("celebration");
+    createConfettiBurst(window.innerWidth / 2, window.innerHeight / 2, 70);
+    navigator.goToScreen(8);
+  });
+
+  // NO INTERACTION (Shows Sad Bhaiyoo)
+  btnNo.addEventListener("click", () => {
+    audioManager.playProceduralPop();
+    decisionImg.src = "assets/characters/bhaiyoo-sad.svg";
+    mainBtns.style.display = "none";
+    needTimeCard.style.display = "none";
+    sadPleaCard.style.display = "block";
+    sadPleaCard.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  // Reconsider from Sad Card
+  btnReconsider.addEventListener("click", () => {
+    audioManager.playProceduralSparkle();
+    decisionImg.src = "assets/characters/siblings-intro.svg";
+    sadPleaCard.style.display = "none";
+    mainBtns.style.display = "flex";
+    showToast("Ek aur chance? 🥺❤️");
+  });
+
+  // OPTION 3: NEED TIME
+  btnNeedTime.addEventListener("click", () => {
+    audioManager.playProceduralPop();
+    mainBtns.style.display = "none";
+    sadPleaCard.style.display = "none";
+    needTimeCard.style.display = "block";
+    needTimeCard.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  btnBackToChoice.addEventListener("click", () => {
+    decisionImg.src = "assets/characters/siblings-intro.svg";
+    needTimeCard.style.display = "none";
+    mainBtns.style.display = "flex";
+  });
+}
+
+function setupWhatsAppActions() {
+  const btnWhatsapp = document.getElementById("btn-whatsapp");
+  const btnCopyMsg = document.getElementById("btn-copy-msg");
+  const copyBtnText = document.getElementById("copy-btn-text");
+
+  // Configure WhatsApp URL
+  const encodedMsg = encodeURIComponent(WHATSAPP_MESSAGE);
+  let waUrl = `https://wa.me/?text=${encodedMsg}`;
+  if (WHATSAPP_PHONE_NUMBER && WHATSAPP_PHONE_NUMBER.trim() !== "") {
+    waUrl = `https://wa.me/${WHATSAPP_PHONE_NUMBER.trim()}?text=${encodedMsg}`;
+  }
+  btnWhatsapp.setAttribute("href", waUrl);
+
+  // Copy Message to Clipboard
+  btnCopyMsg.addEventListener("click", async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(WHATSAPP_MESSAGE);
+      } else {
+        // Fallback for older browsers
+        const textarea = document.createElement("textarea");
+        textarea.value = WHATSAPP_MESSAGE;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+
+      copyBtnText.textContent = "Copied! ❤️";
+      showToast("Message copied! Unblock karke paste kar dena 🥺❤️");
+      setTimeout(() => {
+        copyBtnText.textContent = "Copy Message";
+      }, 3000);
+    } catch (err) {
+      showToast("Could not auto-copy, you can copy manually ❤️");
+    }
+  });
+}
+
+function setupReplyForm() {
+  const form = document.getElementById("reply-form");
+  const textarea = document.getElementById("reply-message");
+  const btnSend = document.getElementById("btn-send-reply");
+  const sendIcon = document.getElementById("send-reply-icon");
+  const sendText = document.getElementById("send-reply-text");
+  const feedback = document.getElementById("reply-feedback");
+
+  // Check if EmailJS public key is configured
+  let isEmailJsReady = false;
+  if (
+    typeof emailjs !== "undefined" &&
+    EMAILJS_CONFIG.PUBLIC_KEY &&
+    EMAILJS_CONFIG.PUBLIC_KEY !== "public_key_placeholder"
+  ) {
+    try {
+      emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+      isEmailJsReady = true;
+    } catch (e) {
+      console.warn("EmailJS init note:", e);
+    }
   }
 
-  /**
-   * Handle Sister's Apology Message Submission
-   */
-  if (sisterForm) {
-    sisterForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const replyText = textarea.value.trim();
+    if (!replyText) {
+      feedback.className = "reply-feedback error";
+      feedback.textContent = "Please kuch likh do Bhaiyoo ke liye 🥺❤️";
+      return;
+    }
 
-      if (isSubmittingMessage) return;
+    // Set loading state
+    btnSend.disabled = true;
+    sendIcon.textContent = "⏳";
+    sendText.textContent = "Sending to Bhaiyoo...";
+    feedback.style.display = "none";
 
-      const messageContent = (sisterTextarea.value || '').trim();
+    const timestamp = new Date().toLocaleString();
 
-      // 1. Validation: Message cannot be empty
-      if (!messageContent) {
-        showFormAlert('Please Motu, Bhaiyoo ke liye kuch to likho... 🥺 Khali message mat bhejo.', 'error');
-        sisterTextarea.focus();
-        return;
-      }
-
-      // 2. Check if Formspree endpoint is configured
-      const isEndpointConfigured =
-        FORMSPREE_ENDPOINT &&
-        FORMSPREE_ENDPOINT !== 'YOUR_FORMSPREE_ENDPOINT' &&
-        FORMSPREE_ENDPOINT.startsWith('http');
-
-      if (!isEndpointConfigured) {
-        showFormAlert(
-          '⚠️ Formspree endpoint configure nahi hai abhi! Website owner: Please replace YOUR_FORMSPREE_ENDPOINT in script.js with your actual Formspree endpoint to receive messages in your email.',
-          'warning'
-        );
-        return;
-      }
-
-      // 3. Initiate submission state
-      isSubmittingMessage = true;
-      btnSendMessage.disabled = true;
-      btnSpinner.classList.remove('hidden');
-      btnText.textContent = 'Sending your message to Bhaiyoo... 💌';
-      formAlert.classList.add('hidden');
-
-      const payload = {
-        message: messageContent,
-        subject: 'A Message From Motu ❤️',
-        submission_time: new Date().toLocaleString(),
-        sender: 'Meri Pyari Motu'
-      };
-
+    if (isEmailJsReady) {
       try {
-        const response = await fetch(FORMSPREE_ENDPOINT, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(payload)
+        await emailjs.send(EMAILJS_CONFIG.SERVICE_ID, EMAILJS_CONFIG.TEMPLATE_ID, {
+          to_email: EMAILJS_CONFIG.FALLBACK_EMAIL,
+          from_name: "Motu ❤️",
+          message: replyText,
+          timestamp: timestamp,
+          website: EMAILJS_CONFIG.WEBSITE_TITLE
         });
 
-        if (response.ok) {
-          // Success: hide form, show beautiful success card
-          sisterForm.classList.add('hidden');
-          formSuccessCard.classList.remove('hidden');
-          playChime(true);
-          createHeartBurst(window.innerWidth / 2, window.innerHeight / 2);
-          showToast('Message sent successfully to Bhaiyoo! 💌');
-        } else {
-          // Server returned error status
-          const data = await response.json().catch(() => null);
-          const errorMsg = data && data.errors && data.errors.length
-            ? data.errors.map(err => err.message).join(', ')
-            : 'Oops Motu! Message send nahi hua. 🥺 Ek baar phir try karo please.';
-          showFormAlert(errorMsg, 'error');
-        }
-      } catch (networkError) {
-        console.error('Submission network error:', networkError);
-        showFormAlert('Oops Motu! Message send nahi hua. 🥺 Ek baar phir try karo please.', 'error');
+        // Confirmed Success
+        feedback.className = "reply-feedback success";
+        feedback.textContent = "Tumhara message Bhaiyoo ko pohanch gaya! 🥺❤️ Shukriya Motu!";
+        textarea.value = "";
+        createConfettiBurst(window.innerWidth / 2, window.innerHeight * 0.7, 50);
+      } catch (err) {
+        console.error("EmailJS Error:", err);
+        fallbackToMailto(replyText);
       } finally {
-        isSubmittingMessage = false;
-        btnSendMessage.disabled = false;
-        btnSpinner.classList.add('hidden');
-        btnText.textContent = '💌 Send Message To Bhaiyoo';
+        btnSend.disabled = false;
+        sendIcon.textContent = "💌";
+        sendText.textContent = "Send to Bhaiyoo 💌";
       }
-    });
-  }
-
-  /* --------------------------------------------------------------------------
-     9. TOAST NOTIFICATION UTILITY
-     -------------------------------------------------------------------------- */
-  function showToast(text) {
-    if (!toastContainer) return;
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = text;
-    toastContainer.appendChild(toast);
-
-    setTimeout(() => {
-      if (toast.parentNode) {
-        toast.parentNode.removeChild(toast);
-      }
-    }, 3200);
-  }
-
-  /* --------------------------------------------------------------------------
-     10. AMBIENT PARTICLES (CANVAS BACKGROUND)
-     -------------------------------------------------------------------------- */
-  const ambientCanvas = document.getElementById('ambient-canvas');
-  let ambientCtx = null;
-  let particles = [];
-  let animFrameId = null;
-
-  function initAmbientCanvas() {
-    if (!ambientCanvas) return;
-    ambientCtx = ambientCanvas.getContext('2d');
-    resizeAmbientCanvas();
-    window.addEventListener('resize', resizeAmbientCanvas);
-
-    // Generate floating hearts & sparkles
-    const count = window.innerWidth < 600 ? 18 : 32;
-    particles = [];
-    for (let i = 0; i < count; i++) {
-      particles.push(createParticle(true));
+    } else {
+      // Safe fallback when EmailJS keys have not been configured yet
+      fallbackToMailto(replyText);
+      btnSend.disabled = false;
+      sendIcon.textContent = "💌";
+      sendText.textContent = "Send to Bhaiyoo 💌";
     }
+  });
 
-    animateAmbientParticles();
+  function fallbackToMailto(message) {
+    const subject = encodeURIComponent("Motu ka Reply Bhaiyoo ke liye ❤️");
+    const body = encodeURIComponent(`Bhaiyoo,\n\n${message}\n\n— Motu ❤️\nSent on: ${new Date().toLocaleString()}`);
+    const mailtoLink = `mailto:${EMAILJS_CONFIG.FALLBACK_EMAIL}?subject=${subject}&body=${body}`;
+
+    feedback.className = "reply-feedback success";
+    feedback.innerHTML = `Tumhara message tayyar hai! Email app khul raha hai... Agar na khule toh <a href="${mailtoLink}" style="color:#0CA678;text-decoration:underline;">Click Here</a> ❤️`;
+    
+    window.location.href = mailtoLink;
+  }
+}
+
+
+/* ============================================================================
+   6. FLOATING PARTICLES & CONFETTI ENGINE
+   ============================================================================ */
+
+class ParticleEngine {
+  constructor() {
+    this.canvas = document.getElementById("bg-canvas");
+    this.ctx = this.canvas.getContext("2d");
+    this.particles = [];
+    this.confetti = [];
+    this.resize();
+
+    window.addEventListener("resize", () => this.resize());
+    this.initAmbientParticles();
+    this.animate();
   }
 
-  function resizeAmbientCanvas() {
-    if (!ambientCanvas) return;
-    ambientCanvas.width = window.innerWidth;
-    ambientCanvas.height = window.innerHeight;
+  resize() {
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
   }
 
-  function createParticle(randomY = false) {
-    const isHeart = Math.random() > 0.35;
-    return {
-      x: Math.random() * ambientCanvas.width,
-      y: randomY ? Math.random() * ambientCanvas.height : ambientCanvas.height + 20,
-      size: isHeart ? Math.random() * 12 + 8 : Math.random() * 4 + 2,
-      speedY: Math.random() * 0.7 + 0.3,
-      speedX: (Math.random() - 0.5) * 0.5,
-      opacity: Math.random() * 0.5 + 0.25,
-      isHeart: isHeart,
-      color: getRandomPastelColor(),
-      wobble: Math.random() * Math.PI * 2,
-      wobbleSpeed: Math.random() * 0.04 + 0.01
-    };
+  initAmbientParticles() {
+    const count = Math.min(30, Math.floor(this.width / 35));
+    for (let i = 0; i < count; i++) {
+      this.particles.push({
+        x: Math.random() * this.width,
+        y: Math.random() * this.height,
+        size: Math.random() * 14 + 10,
+        speedY: Math.random() * 0.4 + 0.2,
+        speedX: (Math.random() - 0.5) * 0.3,
+        opacity: Math.random() * 0.5 + 0.2,
+        type: Math.random() > 0.45 ? "heart" : "star",
+        color: ["#FFADC6", "#FFCCD5", "#FFE5D9", "#E8D7F1", "#FFD166"][Math.floor(Math.random() * 5)]
+      });
+    }
   }
 
-  function getRandomPastelColor() {
-    const colors = [
-      'rgba(251, 111, 146, 0.45)', // Pink
-      'rgba(200, 182, 255, 0.45)', // Lavender
-      'rgba(255, 209, 179, 0.45)', // Peach
-      'rgba(189, 224, 254, 0.45)', // Soft Blue
-      'rgba(255, 179, 198, 0.5)'   // Rose
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
-
-  function drawHeart(ctx, x, y, size, color) {
+  drawHeart(ctx, x, y, size, color, opacity) {
     ctx.save();
-    ctx.translate(x, y);
+    ctx.globalAlpha = opacity;
+    ctx.fillStyle = color;
     ctx.beginPath();
     const topCurveHeight = size * 0.3;
-    ctx.moveTo(0, topCurveHeight);
-    // Left curve
-    ctx.bezierCurveTo(
-      -size / 2, -topCurveHeight,
-      -size, size / 3,
-      0, size
-    );
-    // Right curve
-    ctx.bezierCurveTo(
-      size, size / 3,
-      size / 2, -topCurveHeight,
-      0, topCurveHeight
-    );
+    ctx.moveTo(x, y + topCurveHeight);
+    ctx.bezierCurveTo(x, y, x - size / 2, y, x - size / 2, y + topCurveHeight);
+    ctx.bezierCurveTo(x - size / 2, y + (size + topCurveHeight) / 2, x, y + (size + topCurveHeight) / 1.4, x, y + size);
+    ctx.bezierCurveTo(x, y + (size + topCurveHeight) / 1.4, x + size / 2, y + (size + topCurveHeight) / 2, x + size / 2, y + topCurveHeight);
+    ctx.bezierCurveTo(x + size / 2, y, x, y, x, y + topCurveHeight);
     ctx.closePath();
-    ctx.fillStyle = color;
     ctx.fill();
     ctx.restore();
   }
 
-  function animateAmbientParticles() {
-    if (!ambientCtx) return;
-    ambientCtx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
-
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      p.y -= p.speedY;
-      p.wobble += p.wobbleSpeed;
-      p.x += Math.sin(p.wobble) * 0.6 + p.speedX;
-
-      if (p.isHeart) {
-        drawHeart(ambientCtx, p.x, p.y, p.size, p.color);
-      } else {
-        // Star / sparkle circle
-        ambientCtx.beginPath();
-        ambientCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ambientCtx.fillStyle = p.color;
-        ambientCtx.fill();
-      }
-
-      // Respawn particle when it exits top of screen
-      if (p.y < -30 || p.x < -30 || p.x > ambientCanvas.width + 30) {
-        particles[i] = createParticle(false);
-      }
+  drawStar(ctx, x, y, size, color, opacity) {
+    ctx.save();
+    ctx.globalAlpha = opacity;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      ctx.lineTo(
+        Math.cos(((18 + i * 72) * Math.PI) / 180) * size + x,
+        -Math.sin(((18 + i * 72) * Math.PI) / 180) * size + y
+      );
+      ctx.lineTo(
+        Math.cos(((54 + i * 72) * Math.PI) / 180) * (size / 2) + x,
+        -Math.sin(((54 + i * 72) * Math.PI) / 180) * (size / 2) + y
+      );
     }
-
-    animFrameId = requestAnimationFrame(animateAmbientParticles);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
   }
 
-  /* --------------------------------------------------------------------------
-     11. CELEBRATION CONFETTI & BALLOONS (SCREEN 4A)
-     -------------------------------------------------------------------------- */
-  const confettiCanvas = document.getElementById('confetti-canvas');
-  let confettiCtx = null;
-  let confettiPieces = [];
-  let confettiAnimId = null;
-
-  function launchCelebrationConfetti() {
-    if (!confettiCanvas) return;
-    confettiCtx = confettiCanvas.getContext('2d');
-    confettiCanvas.width = window.innerWidth;
-    confettiCanvas.height = window.innerHeight;
-
-    confettiPieces = [];
-    const colors = ['#fb6f92', '#c8b6ff', '#ffd166', '#ffccd5', '#70d6ff', '#06d6a0'];
-
-    // Spawn 100 confetti pieces + 12 balloons
-    for (let i = 0; i < 90; i++) {
-      confettiPieces.push({
-        x: Math.random() * confettiCanvas.width,
-        y: Math.random() * confettiCanvas.height * 0.3 - 50,
-        size: Math.random() * 8 + 6,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        speedY: Math.random() * 3 + 2,
-        speedX: (Math.random() - 0.5) * 3,
-        rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 8,
-        isHeart: Math.random() > 0.4
-      });
-    }
-
-    if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
-    animateConfetti();
-  }
-
-  function animateConfetti() {
-    if (!confettiCtx) return;
-    confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-
-    let activePieces = 0;
-
-    for (let i = 0; i < confettiPieces.length; i++) {
-      const p = confettiPieces[i];
-      p.y += p.speedY;
-      p.x += p.speedX;
-      p.rotation += p.rotationSpeed;
-
-      if (p.y < confettiCanvas.height + 40) {
-        activePieces++;
-        confettiCtx.save();
-        confettiCtx.translate(p.x, p.y);
-        confettiCtx.rotate((p.rotation * Math.PI) / 180);
-
-        if (p.isHeart) {
-          drawHeart(confettiCtx, 0, 0, p.size, p.color);
-        } else {
-          confettiCtx.fillStyle = p.color;
-          confettiCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 1.4);
-        }
-        confettiCtx.restore();
-      }
-    }
-
-    if (activePieces > 0) {
-      confettiAnimId = requestAnimationFrame(animateConfetti);
-    } else {
-      confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-    }
-  }
-
-  /**
-   * Screen tap burst of heart sparkles
-   */
-  function createHeartBurst(x, y) {
-    if (!ambientCtx) return;
-    for (let i = 0; i < 14; i++) {
-      const angle = (Math.PI * 2 / 14) * i;
-      const speed = Math.random() * 4 + 2;
-      particles.push({
+  addConfetti(x, y, count = 35) {
+    const colors = ["#FF4D6D", "#FF85A2", "#FFD166", "#06D6A0", "#118AB2", "#8338EC", "#FFB703"];
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const velocity = Math.random() * 8 + 3;
+      this.confetti.push({
         x: x,
         y: y,
-        size: Math.random() * 10 + 6,
-        speedY: Math.sin(angle) * speed,
-        speedX: Math.cos(angle) * speed,
-        opacity: 0.9,
-        isHeart: true,
-        color: '#fb6f92',
-        wobble: 0,
-        wobbleSpeed: 0
+        vx: Math.cos(angle) * velocity,
+        vy: Math.sin(angle) * velocity - 2,
+        size: Math.random() * 8 + 6,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        rotationSpeed: (Math.random() - 0.5) * 12,
+        life: 1.0,
+        decay: Math.random() * 0.015 + 0.01
       });
     }
   }
 
-  /* --------------------------------------------------------------------------
-     12. SWEET MUSIC BOX CHIME (WEB AUDIO API - ZERO EXTERNAL ASSET DEPENDENCY)
-     -------------------------------------------------------------------------- */
-  let audioCtx = null;
-  let isSoundEnabled = false;
+  animate() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
 
-  function initAudio() {
-    if (!audioCtx) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) {
-        audioCtx = new AudioContext();
+    // Render ambient floating hearts and stars
+    for (const p of this.particles) {
+      p.y -= p.speedY;
+      p.x += p.speedX;
+
+      if (p.y < -30) {
+        p.y = this.height + 20;
+        p.x = Math.random() * this.width;
       }
-    }
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
-  }
+      if (p.x < -30) p.x = this.width + 20;
+      if (p.x > this.width + 30) p.x = -20;
 
-  /**
-   * Gentle, cheerful chime sound
-   */
-  function playChime(isHappyEnding = false) {
-    if (!isSoundEnabled) return;
-    try {
-      initAudio();
-      if (!audioCtx) return;
-
-      const notes = isHappyEnding ? [523.25, 659.25, 783.99, 1046.5] : [523.25, 659.25, 783.99]; // C5, E5, G5, C6
-      notes.forEach((freq, idx) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.12);
-
-        gain.gain.setValueAtTime(0, audioCtx.currentTime + idx * 0.12);
-        gain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + idx * 0.12 + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.12 + 0.6);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start(audioCtx.currentTime + idx * 0.12);
-        osc.stop(audioCtx.currentTime + idx * 0.12 + 0.65);
-      });
-    } catch (e) {
-      console.warn('Audio playback error:', e);
-    }
-  }
-
-  /**
-   * Gentle, soft sad chime
-   */
-  function playSadChime() {
-    if (!isSoundEnabled) return;
-    try {
-      initAudio();
-      if (!audioCtx) return;
-
-      const notes = [659.25, 587.33, 523.25]; // E5, D5, C5
-      notes.forEach((freq, idx) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.18);
-
-        gain.gain.setValueAtTime(0, audioCtx.currentTime + idx * 0.18);
-        gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + idx * 0.18 + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.18 + 0.8);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start(audioCtx.currentTime + idx * 0.18);
-        osc.stop(audioCtx.currentTime + idx * 0.18 + 0.85);
-      });
-    } catch (e) {
-      console.warn('Audio playback error:', e);
-    }
-  }
-
-  if (soundToggleBtn) {
-    soundToggleBtn.addEventListener('click', () => {
-      initAudio();
-      isSoundEnabled = !isSoundEnabled;
-      if (isSoundEnabled) {
-        soundToggleBtn.classList.add('playing');
-        soundIcon.textContent = '🔊';
-        showToast('Sweet chimes enabled 🎵');
-        playChime();
+      if (p.type === "heart") {
+        this.drawHeart(this.ctx, p.x, p.y, p.size, p.color, p.opacity);
       } else {
-        soundToggleBtn.classList.remove('playing');
-        soundIcon.textContent = '🎵';
-        showToast('Sound muted 🔇');
+        this.drawStar(this.ctx, p.x, p.y, p.size / 2.2, p.color, p.opacity);
       }
-    });
+    }
+
+    // Render explosive confetti
+    for (let i = this.confetti.length - 1; i >= 0; i--) {
+      const c = this.confetti[i];
+      c.x += c.vx;
+      c.y += c.vy;
+      c.vy += 0.22; // Gravity
+      c.vx *= 0.98; // Air resistance
+      c.rotation += c.rotationSpeed;
+      c.life -= c.decay;
+
+      if (c.life <= 0 || c.y > this.height + 50) {
+        this.confetti.splice(i, 1);
+        continue;
+      }
+
+      this.ctx.save();
+      this.ctx.globalAlpha = c.life;
+      this.ctx.translate(c.x, c.y);
+      this.ctx.rotate((c.rotation * Math.PI) / 180);
+      this.ctx.fillStyle = c.color;
+      this.ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size * 0.7);
+      this.ctx.restore();
+    }
+
+    requestAnimationFrame(() => this.animate());
   }
+}
 
-  /* --------------------------------------------------------------------------
-     13. INITIALIZATION ON DOM READY
-     -------------------------------------------------------------------------- */
-  document.addEventListener('DOMContentLoaded', () => {
-    initAmbientCanvas();
-    updateStepper('1');
+let globalParticleEngine = null;
+
+function createConfettiBurst(x, y, count) {
+  if (globalParticleEngine) {
+    globalParticleEngine.addConfetti(x, y, count);
+  }
+}
+
+function triggerGrandCelebration() {
+  const bursts = [
+    { x: window.innerWidth * 0.2, y: window.innerHeight * 0.4, delay: 0 },
+    { x: window.innerWidth * 0.8, y: window.innerHeight * 0.4, delay: 250 },
+    { x: window.innerWidth * 0.5, y: window.innerHeight * 0.3, delay: 500 },
+    { x: window.innerWidth * 0.35, y: window.innerHeight * 0.5, delay: 850 },
+    { x: window.innerWidth * 0.65, y: window.innerHeight * 0.5, delay: 1100 }
+  ];
+
+  bursts.forEach(({ x, y, delay }) => {
+    setTimeout(() => {
+      createConfettiBurst(x, y, 50);
+    }, delay);
   });
+}
 
-})();
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("active");
+  clearTimeout(toast._timeout);
+  toast._timeout = setTimeout(() => {
+    toast.classList.remove("active");
+  }, 3200);
+}
 
+
+/* ============================================================================
+   7. INITIALIZATION ON DOM READY
+   ============================================================================ */
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("🌸 SORRY MOTU! Website initialized with love ❤️");
+
+  // Initialize Particles Canvas
+  globalParticleEngine = new ParticleEngine();
+
+  // Initialize Audio & Navigation
+  const audioManager = new AudioManager();
+  const navigator = new ScreenNavigator(audioManager);
+
+  // Initialize Features
+  setupVoiceControls(audioManager);
+  setupSecretHeartSurprise(audioManager);
+  setupDecisionScreen(navigator, audioManager);
+  setupWhatsAppActions();
+  setupReplyForm();
+});

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 320" width="100%" height="100%">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <style>
+    .motu-react { animation: motuBounce 2s ease-in-out infinite alternate; transform-origin: center bottom; }
+    @keyframes motuBounce {
+      0% { transform: translateY(0px) rotate(1deg); }
+      100% { transform: translateY(-8px) rotate(-1deg); }
+    }
+  </style>
+  <g class="motu-react">
+    <path d="M80 185 C65 200 60 230 60 280 C60 295 220 295 220 280 C220 230 215 200 200 185 Z" fill="#FFADC6" stroke="#3D2817" stroke-width="3"/>
+    <path d="M115 190 C120 210 160 210 165 190" fill="#FFF5F8" stroke="#FF758F" stroke-width="2"/>
+
+    <ellipse cx="85" cy="150" rx="10" ry="12" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+    <ellipse cx="195" cy="150" rx="10" ry="12" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+
+    <ellipse cx="140" cy="115" rx="50" ry="52" fill="#FFE0CE" stroke="#3D2817" stroke-width="3"/>
+    <circle cx="88" cy="60" r="22" fill="#3A2012" stroke="#3D2817" stroke-width="2.5"/>
+    <path d="M84 76 C78 70 78 82 84 78 C90 82 90 70 84 76 Z" fill="#FF6584"/>
+    <circle cx="192" cy="60" r="22" fill="#3A2012" stroke="#3D2817" stroke-width="2.5"/>
+    <path d="M196 76 C202 70 202 82 196 78 C190 82 190 70 196 76 Z" fill="#FF6584"/>
+
+    <path d="M92 110 C88 65 114 50 140 50 C166 50 192 65 188 110 C182 80 166 65 140 65 C114 65 98 80 92 110 Z" fill="#3A2012"/>
+    <path d="M90 100 C98 80 118 65 140 65 C162 65 182 80 190 100 C176 86 156 84 140 92 C124 84 104 86 90 100 Z" fill="#3A2012" stroke="#3D2817" stroke-width="2"/>
+
+    <ellipse cx="90" cy="120" rx="7" ry="10" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+    <ellipse cx="190" cy="120" rx="7" ry="10" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+
+    <path d="M112 92 Q122 84 130 92" stroke="#3D2817" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M168 92 Q158 84 150 92" stroke="#3D2817" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+    <ellipse cx="122" cy="112" rx="9" ry="12" fill="#2B170E"/>
+    <circle cx="119" cy="107" r="4.5" fill="#FFFFFF"/>
+    <circle cx="126" cy="116" r="2" fill="#FFFFFF"/>
+    <ellipse cx="158" cy="112" rx="9" ry="12" fill="#2B170E"/>
+    <circle cx="155" cy="107" r="4.5" fill="#FFFFFF"/>
+    <circle cx="162" cy="116" r="2" fill="#FFFFFF"/>
+
+    <ellipse cx="108" cy="124" rx="11" ry="8" fill="#FFAAA6" opacity="0.9"/>
+    <ellipse cx="172" cy="124" rx="11" ry="8" fill="#FFAAA6" opacity="0.9"/>
+
+    <ellipse cx="140" cy="130" rx="7" ry="9" fill="#C85A6A"/>
+    <ellipse cx="140" cy="128" rx="5" ry="3" fill="#FFE0CE"/>
+
+    <path d="M140 25 C140 18 148 18 148 25 C148 31 140 37 140 37 C140 37 132 31 132 25 C132 18 140 18 140 25 Z" fill="#FF4D6D" filter="url(#glow)"/>
+  </g>
+</svg>

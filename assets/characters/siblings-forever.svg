@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 340" width="100%" height="100%">
+  <defs>
+    <filter id="heartGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <linearGradient id="giantHeartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF758F"/>
+      <stop offset="50%" stop-color="#FF4D6D"/>
+      <stop offset="100%" stop-color="#C9184A"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .forever-float { animation: foreverBob 3s ease-in-out infinite alternate; transform-origin: center bottom; }
+    .heart-pulse { animation: heartBeating 1.5s ease-in-out infinite; transform-origin: 190px 220px; }
+    @keyframes foreverBob {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-8px); }
+    }
+    @keyframes heartBeating {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+  </style>
+
+  <g class="forever-float">
+    <g>
+      <path d="M80 180 C60 190 50 220 50 280 C50 295 180 295 180 280 C180 220 170 190 150 180 Z" fill="#7EC8E3" stroke="#3D2817" stroke-width="3"/>
+      <ellipse cx="115" cy="115" rx="46" ry="48" fill="#FFE0CE" stroke="#3D2817" stroke-width="3"/>
+      <path d="M71 110 C67 65 92 50 115 50 C138 50 163 65 159 110 C153 80 138 65 115 65 C92 65 77 80 71 110 Z" fill="#4A2E18"/>
+      <ellipse cx="69" cy="120" rx="8" ry="11" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+      <ellipse cx="161" cy="120" rx="8" ry="11" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+      <path d="M115 50 C113 35 103 25 109 20 C117 18 120 35 117 50 Z" fill="#4A2E18" stroke="#3D2817" stroke-width="2"/>
+      <path d="M69 105 C72 80 97 65 115 65 C133 65 158 80 161 105 C148 90 135 90 128 98 C120 82 105 82 99 95 C91 88 77 92 69 105 Z" fill="#4A2E18" stroke="#3D2817" stroke-width="2"/>
+
+      <path d="M92 114 Q100 106 108 114" stroke="#3D2817" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M122 114 Q130 106 138 114" stroke="#3D2817" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <ellipse cx="86" cy="122" rx="9" ry="6" fill="#FFAAA6" opacity="0.85"/>
+      <ellipse cx="144" cy="122" rx="9" ry="6" fill="#FFAAA6" opacity="0.85"/>
+      <path d="M108 126 Q115 133 122 126" stroke="#C85A6A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    </g>
+
+    <g>
+      <path d="M230 180 C210 190 200 220 200 280 C200 295 330 295 330 280 C330 220 320 190 300 180 Z" fill="#FFADC6" stroke="#3D2817" stroke-width="3"/>
+      <ellipse cx="265" cy="115" rx="46" ry="48" fill="#FFE0CE" stroke="#3D2817" stroke-width="3"/>
+      <circle cx="220" cy="65" r="20" fill="#3A2012" stroke="#3D2817" stroke-width="2.5"/>
+      <path d="M216 80 C210 74 210 86 216 82 C222 86 222 74 216 80 Z" fill="#FF6584"/>
+      <circle cx="310" cy="65" r="20" fill="#3A2012" stroke="#3D2817" stroke-width="2.5"/>
+      <path d="M314 80 C320 74 320 86 314 82 C308 86 308 74 314 80 Z" fill="#FF6584"/>
+      <path d="M221 110 C217 65 242 50 265 50 C288 50 313 65 309 110 C303 80 288 65 265 65 C242 65 227 80 221 110 Z" fill="#3A2012"/>
+      <path d="M219 100 C227 80 247 65 265 65 C283 65 303 80 311 100 C298 86 278 84 265 92 C252 84 232 86 219 100 Z" fill="#3A2012" stroke="#3D2817" stroke-width="2"/>
+
+      <path d="M242 114 Q250 106 258 114" stroke="#3D2817" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M272 114 Q280 106 288 114" stroke="#3D2817" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <ellipse cx="236" cy="122" rx="9" ry="6" fill="#FFAAA6" opacity="0.85"/>
+      <ellipse cx="294" cy="122" rx="9" ry="6" fill="#FFAAA6" opacity="0.85"/>
+      <path d="M258 126 Q265 133 272 126" stroke="#C85A6A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    </g>
+
+    <g class="heart-pulse">
+      <path d="M190 200 C190 160 250 160 250 205 C250 245 190 275 190 275 C190 275 130 245 130 205 C130 160 190 160 190 200 Z" fill="url(#giantHeartGrad)" stroke="#FFFFFF" stroke-width="3.5" filter="url(#heartGlow)"/>
+      <path d="M155 185 Q170 175 180 185" stroke="#FFAAA6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <ellipse cx="138" cy="215" rx="10" ry="8" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+      <ellipse cx="242" cy="215" rx="10" ry="8" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+      <text x="190" y="226" font-family="'Quicksand', sans-serif" font-weight="bold" font-size="16" fill="#FFFFFF" text-anchor="middle">Motu ❤️ Bhaiyoo</text>
+    </g>
+  </g>
+</svg>

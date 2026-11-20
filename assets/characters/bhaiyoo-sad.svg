@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 300" width="100%" height="100%">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <style>
+    .sad-bhai { animation: sadShiver 1.8s ease-in-out infinite; transform-origin: center bottom; }
+    .tears { animation: tearFall 1.5s infinite; }
+    @keyframes sadShiver {
+      0%, 100% { transform: translateY(0) scale(0.98); }
+      50% { transform: translateY(-4px) scale(1.01); }
+    }
+    @keyframes tearFall {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(20px); opacity: 0; }
+    }
+  </style>
+  <g class="sad-bhai">
+    <path d="M90 170 C70 180 60 210 60 280 C60 295 220 295 220 280 C220 210 210 180 190 170 Z" fill="#7EC8E3" stroke="#3D2817" stroke-width="3"/>
+    <ellipse cx="140" cy="220" rx="16" ry="14" fill="#FFE0CE" stroke="#3D2817" stroke-width="2.5"/>
+
+    <ellipse cx="140" cy="110" rx="50" ry="52" fill="#FFE0CE" stroke="#3D2817" stroke-width="3"/>
+    <path d="M92 105 C88 62 114 45 140 45 C166 45 192 62 188 105 C182 76 166 60 140 60 C114 60 98 76 92 105 Z" fill="#4A2E18"/>
+    <ellipse cx="90" cy="116" rx="8" ry="11" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+    <ellipse cx="190" cy="116" rx="8" ry="11" fill="#FFE0CE" stroke="#3D2817" stroke-width="2"/>
+    <path d="M140 45 C136 30 120 24 126 20 C134 18 142 30 141 45 Z" fill="#4A2E18" stroke="#3D2817" stroke-width="2"/>
+    <path d="M90 100 C94 75 118 60 140 60 C162 60 186 75 190 100 C176 84 162 84 155 92 C148 76 132 76 125 90 C118 82 102 86 90 100 Z" fill="#4A2E18" stroke="#3D2817" stroke-width="2"/>
+
+    <path d="M110 95 Q120 86 130 92" stroke="#3D2817" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+    <path d="M170 95 Q160 86 150 92" stroke="#3D2817" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+
+    <ellipse cx="118" cy="114" rx="10" ry="14" fill="#2B170E"/>
+    <circle cx="114" cy="108" r="5" fill="#FFFFFF"/>
+    <circle cx="122" cy="118" r="2.5" fill="#FFFFFF"/>
+    <ellipse cx="162" cy="114" rx="10" ry="14" fill="#2B170E"/>
+    <circle cx="158" cy="108" r="5" fill="#FFFFFF"/>
+    <circle cx="166" cy="118" r="2.5" fill="#FFFFFF"/>
+
+    <g class="tears">
+      <path d="M110 126 C105 136 102 144 106 148 C110 152 116 148 114 140 Z" fill="#6CB8D6" filter="url(#glow)"/>
+      <path d="M170 126 C175 136 178 144 174 148 C170 152 164 148 166 140 Z" fill="#6CB8D6" filter="url(#glow)"/>
+    </g>
+
+    <path d="M132 135 Q136 131 140 135 Q144 139 148 135" stroke="#C85A6A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>
